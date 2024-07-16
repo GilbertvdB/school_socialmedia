@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -58,9 +59,21 @@ class User extends Authenticatable
         return $this->belongsToMany(PostGroup::class)->withTimestamps();
     }
 
-    // Accessor to get post group names as a comma-separated string
+    // Accessor to get post group names as a comma-separated string .ie $post->post_groups_names
     public function getPostGroupsNamesAttribute()
     {
         return $this->postGroups->pluck('name')->implode(', ');
+    }
+
+    // filter the query to only include users with the parent role. ie User::parents()->
+    public function scopeParents(Builder $query): Builder
+    {
+        return $query->where('role', 'parent');
+    }
+
+    public function students(): BelongsToMany
+    {
+        return $this->belongsToMany(Student::class, 'parent_student', 'user_id', 'student_id')
+                ->withTimestamps();
     }
 }

@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\PostGroupController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +24,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('/classrooms', ClassroomController::class);
     Route::resource('/postgroups', PostGroupController::class);
     Route::resource('/users', UserController::class);
+    Route::resource('/students', StudentController::class);
     
 });
 
