@@ -45,11 +45,11 @@ class StudentController extends Controller
                 'parents' => ['array'],
                 'parents.*' => ['exists:users,id',]
             ]);
-        dd($request->classroom);
+        // dd($request->classroom);
         $student = Student::create($validated);
         
         if ($request->has('classroom')) {
-            $student->classroom()->attach([$request->classroom]);
+            $student->classroom()->attach($request->classroom);
         }
 
         if ($request->has('parents')) {
