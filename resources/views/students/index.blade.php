@@ -60,7 +60,7 @@
 
                                             <x-slot name="content">
                                             @foreach( $student->parents as $parent )
-                                                <x-dropdown-link :href="route('profile.edit')">
+                                                <x-dropdown-link :href="route('profile.show', $parent)">
                                                     {{ $parent->name }}
                                                 </x-dropdown-link>
                                             @endforeach
