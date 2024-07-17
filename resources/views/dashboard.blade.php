@@ -30,7 +30,11 @@
                         <div class="flex-1">
                             <div class="flex justify-between items-center">
                                 <div>
-                                    <span class="text-gray-800">{{ $post->user->name }}</span>
+                                    <span class="text-gray-800">
+                                        <a href="{{ route('profile.show', $post->user)}}" >
+                                            {{ $post->user->name }}
+                                        </a>
+                                    </span>
                                     <span class="text-gray-900 text-xl">{{ __('>') }}</span>
                                     <span class="text-blue-800 font-bold">{{ $post->post_groups_names }}</span>
                                     <div class="div">
