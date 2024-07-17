@@ -21,6 +21,15 @@ class StudentController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     */
+    public function show(Student $student)
+    {      
+        $user = $student;
+        return view('profile.show', compact('user'));
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create(): View

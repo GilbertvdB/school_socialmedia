@@ -8,7 +8,9 @@
     
     <div>
         <p>{{ $user->email }}</p>
-        <p>+31 06 nummer</p>
-        <p>Adressstraat 24, Stadmere</p>
+        @if($user->role == 'parent')
+            <p>+31 06 nummer</p>
+            <p>Adressstraat 24, Stadmere</p>
+        @endif
     </div>
 </section>
