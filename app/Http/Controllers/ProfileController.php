@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Contact;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -35,13 +36,31 @@ class ProfileController extends Controller
      * Update the user's profile information.
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
-    {
+    {   
         $request->user()->fill($request->validated());
 
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
         }
 
+        
+        if ($request->has('number') || $request->has('address'))
+        {
+            $contact = Contact::updateOrCreate(
+                ["user_id" => $request->user()->id],
+                ["number" => $request->number,
+                 "address" => $request->address,
+                 "postal_code" => $request->postal_code,
+                 "city" => $request->city]
+            );
+            
+            if (!$request->user()->contact_id)
+            {
+                $request->user()->contact_id = $contact->id;
+            }
+                
+        }
+        
         $request->user()->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');

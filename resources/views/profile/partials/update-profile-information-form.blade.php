@@ -47,6 +47,37 @@
             @endif
         </div>
 
+        <header>
+            <h2 class="text-lg font-medium text-gray-900">
+                {{ __('Contact Information') }}
+            </h2>
+        </header>
+
+        <div class="mt-4">
+            <x-input-label for="number" :value="__('Phone Number')" />
+            <x-text-input id="number" name="number" type="text" class="mt-1 block w-full" :value="old('number', $user->contact->number ?? '')" placeholder="ie. 061234567" autocomplete="number" />
+            <x-input-error class="mt-2" :messages="$errors->get('number')" />
+        </div>
+
+        <div class="mt-4">
+            <x-input-label for="address" :value="__('Address')" />
+            <x-text-input id="address" name="address" type="text" class="mt-1 block w-full" :value="old('address', $user->contact->address ?? '')" placeholder="Townstreet 13D" autocomplete="address" />
+            <x-input-error class="mt-2" :messages="$errors->get('address')" />
+        </div>
+
+        <div class="mt-4">
+            <x-input-label for="postal_code" :value="__('Postal Code')" />
+            <x-text-input id="postal_code" name="postal_code" type="text" class="mt-1 block w-full" :value="old('postal_code', $user->contact->postal_code ?? '')" placeholder="1234ZX" autocomplete="postal_code" />
+            <x-input-error class="mt-2" :messages="$errors->get('postal_code')" />
+        </div>
+
+        <div class="mt-4">
+            <x-input-label for="city" :value="__('City')" />
+            <x-text-input id="city" name="city" type="text" class="mt-1 block w-full" :value="old('city', $user->contact->city ?? '')" placeholder="Chillcity" autocomplete="city" />
+            <x-input-error class="mt-2" :messages="$errors->get('city')" />
+        </div>
+        
+
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 
