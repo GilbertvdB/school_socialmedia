@@ -23,6 +23,14 @@ class NewPasswordController extends Controller
     }
 
     /**
+     * Display the create new password view.
+     */
+    public function createNew(Request $request): View
+    {
+        return view('auth.new-password', ['request' => $request]);
+    }
+
+    /**
      * Handle an incoming new password request.
      *
      * @throws \Illuminate\Validation\ValidationException
@@ -44,18 +52,19 @@ class NewPasswordController extends Controller
                 $user->forceFill([
                     'password' => Hash::make($request->password),
                     'remember_token' => Str::random(60),
-                ])->save();
+                ],'NEW')->save();
 
                 event(new PasswordReset($user));
             }
         );
-
-        // If the password was successfully reset, we will redirect the user back to
+        
+        // If the password was successfully reset or created, we will redirect the user back to
         // the application's home authenticated view. If there is an error we can
         // redirect them back to where they came from with their error message.
-        return $status == Password::PASSWORD_RESET
+        return ($status == Password::PASSWORD_RESET || $status == Password::PASSWORD_NEW)
                     ? redirect()->route('login')->with('status', __($status))
                     : back()->withInput($request->only('email'))
                             ->withErrors(['email' => __($status)]);
     }
+
 }
