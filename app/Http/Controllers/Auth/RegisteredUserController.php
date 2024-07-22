@@ -47,7 +47,6 @@ class RegisteredUserController extends Controller
             'role' => $request->role,
             'email' => $request->email,
             // 'password' => Hash::make($request->password),
-            //test password - generated pass needs to be mailed to registered user
             'password' => Hash::make('test'),
         ]);
 
@@ -59,9 +58,6 @@ class RegisteredUserController extends Controller
         $status = CreateNewPasswordLinkController::sendCreateNewLink(['email' => $user->email]);
         event(new Registered($user));
 
-        // Auth::login($user);
-
-        // return redirect(route('users.index', absolute: false))->with('status', $status);
         if($status == Password::CREATE_NEW_LINK_SENT)
         {
             return redirect(route('users.index', absolute: false ))->with('status', __($status));

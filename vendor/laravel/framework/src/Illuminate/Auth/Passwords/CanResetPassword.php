@@ -36,6 +36,8 @@ trait CanResetPassword
      */
     public function sendCreateNewPasswordNotification(#[\SensitiveParameter] $token)
     {   
-        $this->notify(new CreateNewPasswordNotification($token));
+        $delay = now()->addMinutes(1);
+
+        $this->notify((new CreateNewPasswordNotification($token))->delay($delay));
     }
 }
