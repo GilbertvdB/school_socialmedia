@@ -29,7 +29,7 @@ class SendPostCreatedNotifications implements ShouldQueue
         foreach (User::whereHas('postGroups', function ($query) use ($postGroupIds) {
             $query->whereIn('post_groups.id', $postGroupIds);
         })
-        ->whereNot('id', $event->post->user_id)
+        ->whereNot('id', $event->post->author_id)
         ->cursor() as $user) {
             $user->notify(new NewPost($event->post));
         }
