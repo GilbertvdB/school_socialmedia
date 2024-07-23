@@ -1,6 +1,6 @@
 <x-app-layout>
 <x-slot name="header">
-        <div class="div flex  items-center">
+        <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Edit Post') }}
             </h2>
@@ -30,6 +30,7 @@
             <x-input-label for="body" :value="__('Content')" class="mb-2" />
             <textarea
                 name="body"
+                rows="10"
                 class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"
             >{{ old('body', $post->body) }}</textarea>
             <x-input-error :messages="$errors->get('body')" class="mt-2" />
