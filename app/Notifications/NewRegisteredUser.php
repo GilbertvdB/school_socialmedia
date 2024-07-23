@@ -34,14 +34,16 @@ class NewRegisteredUser extends Notification
      * Get the mail representation of the notification.
      */
     public function toMail(object $notifiable): MailMessage
-    {
+    {   
+        $appName = config('app.name');
+
         return (new MailMessage)
-                    ->subject("Welcome to School Socials!")
-                    ->greeting("Activate your account {$this->user->name}")
-                    ->line("Welcome to School Socials {$this->user->name}")
-                    ->line("This is a second line.")
-                    ->line("And here is your log in password {$this->user->password}")
-                    ->action('Activate account link', url('/'))
+                    ->subject("Welcome to {$appName}")
+                    ->greeting("Welcome {$this->user->name}")
+                    ->line("You have been invited to join {$appName}.")
+                    ->line("A following email will be send shortly for you to create a new password.")
+                    ->line("After this step you'll be able to log into your account.")
+                    // ->action('Activate account link', url('/'))
                     ->line('Thank you for using our application!');
     }
 
