@@ -7,10 +7,20 @@ use App\Http\Controllers\PostGroupController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
+use App\Models\Post;
+use App\Notifications\NewPost;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+// Testint previewing notification mails
+Route::get('/notification', function () {
+    $post = Post::find(17);
+ 
+    return (new NewPost($post))
+                ->toMail($post->user);
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
@@ -29,8 +39,6 @@ Route::middleware('auth')->group(function () {
     
 });
 
-Route::resource('posts', PostController::class)
-->only(['index', 'create', 'store', 'edit', 'update', 'destroy'])
-    ->middleware(['auth', 'verified']);
+Route::resource('posts', PostController::class)->middleware(['auth', 'verified']);
 
 require __DIR__.'/auth.php';
