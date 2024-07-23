@@ -11,19 +11,11 @@ use App\Models\Post;
 use App\Notifications\NewPost;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
-// Testint previewing notification mails
-Route::get('/notification', function () {
-    $post = Post::find(17);
- 
-    return (new NewPost($post))
-                ->toMail($post->user);
-});
-
-Route::get('/dashboard', [DashboardController::class, 'index'])
+Route::get('/', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -37,6 +29,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('/users', UserController::class);
     Route::resource('/students', StudentController::class);
     
+    // development routes
+    Route::get('/notification', function () {
+        $post = Post::find(17);
+     
+        return (new NewPost($post))
+                    ->toMail($post->user);
+    });
 });
 
 Route::resource('posts', PostController::class)->middleware(['auth', 'verified']);
