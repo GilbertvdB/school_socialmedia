@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Events\NewUserRegistered;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Auth\CreateNewPasswordLinkController;
 use App\Models\User;
 use App\Models\PostGroup;
 use Illuminate\Auth\Events\Registered;
@@ -10,6 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
@@ -44,7 +47,6 @@ class RegisteredUserController extends Controller
             'role' => $request->role,
             'email' => $request->email,
             // 'password' => Hash::make($request->password),
-            //test password - generated pass needs to be mailed to registered user
             'password' => Hash::make('test'),
         ]);
 
@@ -52,10 +54,15 @@ class RegisteredUserController extends Controller
             $user->postGroups()->attach($request->post_groups);
         }
 
+        NewUserRegistered::dispatch($user);
+        $status = CreateNewPasswordLinkController::sendCreateNewLink(['email' => $user->email]);
         event(new Registered($user));
 
-        // Auth::login($user);
-
-        return redirect(route('users.index', absolute: false));
+        if($status == Password::CREATE_NEW_LINK_SENT)
+        {
+            return redirect(route('users.index', absolute: false ))->with('status', __($status));
+        } else {
+            return back()->withInput($user->email)->withErrors(['email' => __($status)]);
+        }
     }
 }
