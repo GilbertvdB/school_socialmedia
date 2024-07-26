@@ -8,7 +8,7 @@
     </x-slot>
     
     <div class="max-w-6xl mx-auto p-6 sm:px-6 lg:p-8">
-        <div class="mt-4 grid gap-y-8">
+        <div class="grid gap-y-8">
             @foreach ($posts as $post)
                 @include('posts.post-box')
             @endforeach
