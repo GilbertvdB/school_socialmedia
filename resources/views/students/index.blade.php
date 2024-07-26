@@ -10,39 +10,35 @@
         </div>
     </x-slot>
     
-    <div class="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8 border">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Students Table') }}
-            </h2>
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
 
         <!-- display table -->
-        <div class="container mx-auto px-4">
-            <!-- <h1 class="text-2xl font-bold mb-4">Students</h1> -->
-            
+        <div class="container mx-auto">
+
             @if ($students->isEmpty())
                 <p class="text-gray-700">No students available.</p>
             @else
-                <table class="min-w-full bg-white border border-gray-300">
+                <table class="min-w-full bg-white rounded-t-lg">
                     <thead>
-                        <tr>
-                            <th class="py-2 px-4 border-b border-gray-300">FirstName</th>
-                            <th class="py-2 px-4 border-b border-gray-300">LastName</th>
-                            <th class="py-2 px-4 border-b border-gray-300">Birthdate</th>
-                            <th class="py-2 px-4 border-b border-gray-300">Gender</th>
-                            <th class="py-2 px-4 border-b border-gray-300">Class</th>
-                            <th class="py-2 px-4 border-b border-gray-300">Parents</th>
-                            <th class="py-2 px-4 border-b border-gray-300 text-right">Options</th>
+                        <tr class="text-left">
+                            <th class="py-4 px-4 border-b border-gray-300">FirstName</th>
+                            <th class="py-4 px-4 border-b border-gray-300">LastName</th>
+                            <th class="py-4 px-4 border-b border-gray-300">Birthdate</th>
+                            <th class="py-4 px-4 border-b border-gray-300">Gender</th>
+                            <th class="py-4 px-4 border-b border-gray-300">Class</th>
+                            <th class="py-4 px-4 border-b border-gray-300">Parents</th>
+                            <th class="py-4 px-4 border-b border-gray-300">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="border">
                         @foreach ($students as $student)
-                            <tr>
-                                <td class="py-2 px-4 border-b border-gray-300 text-center">{{ $student->firstname }}</td>
-                                <td class="py-2 px-4 border-b border-gray-300 text-center">{{ $student->lastname }}</td>
-                                <td class="py-2 px-4 border-b border-gray-300 text-center">{{ $student->birthdate }}</td>
-                                <td class="py-2 px-4 border-b border-gray-300 text-center">{{ ucfirst($student->gender) }}</td>
-                                <td class="py-2 px-4 border-b border-gray-300 text-center"> {{ $student->classroom_name }}</td>
-                                <td class="py-2 px-4 border-b border-gray-300 text-center"> 
+                            <tr class="odd:bg-gray-50 even:bg-white hover:bg-indigo-50 text-left">
+                                <td class="py-4 px-4 border-b border-gray-300">{{ $student->firstname }}</td>
+                                <td class="py-4 px-4 border-b border-gray-300">{{ $student->lastname }}</td>
+                                <td class="py-4 px-4 border-b border-gray-300">{{ $student->birthdate }}</td>
+                                <td class="py-4 px-4 border-b border-gray-300">{{ ucfirst($student->gender) }}</td>
+                                <td class="py-4 px-4 border-b border-gray-300"> {{ $student->classroom_name }}</td>
+                                <td class="py-4 px-4 border-b border-gray-300"> 
                                     <!-- Settings Dropdown -->
                                     <div class="hidden sm:flex sm:items-center sm:ms-6">
                                         <x-dropdown align="left" width="48">
@@ -68,7 +64,7 @@
                                         </x-dropdown>
                                     </div>
                                 </td>
-                                <td class="py-2 px-4 border-b border-gray-300 text-right">
+                                <td class="py-2 px-4 border-b border-gray-300">
                                     <a href="{{ route('students.edit', $student->id) }}" class="text-blue-600 hover:text-blue-800">Edit</a>
                                     <form action="{{ route('students.destroy', $student->id) }}" method="POST" class="inline">
                                         @csrf
