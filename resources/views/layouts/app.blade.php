@@ -20,54 +20,56 @@
 
             
             <div class="flex flex-col-2">
-                <div class="hidden sm:flex border relative bg-white w-1/5 ">
-                    <div class="flex flex-col w-full sticky top-0">
-                        <!-- Navigation Links -->
-                        <div class="hidden space-y-1 sm:-my-px sm:flex">
-                            <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                                {{ __('Dashboard') }}
-                            </x-nav-link>
-                        </div>
-                        
-                        @unless(Auth::user()->role === 'parent')
-                        <div class="hidden space-y-1 sm:-my-px sm:flex">
-                            <x-nav-link :href="route('posts.index')" :active="request()->routeIs('posts.*')">
-                                {{ __('Posts') }}
-                            </x-nav-link>
-                        </div>
-                        @endunless
+                <div class="hidden sm:flex border relative bg-white w-1/5">
+                    <div class="flex flex-col w-full">
+                        <div class="sticky top-0">
+                            <!-- Navigation Links -->
+                            <div class="hidden space-y-1 sm:-my-px sm:flex">
+                                <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                                    {{ __('Dashboard') }}
+                                </x-nav-link>
+                            </div>
+                            
+                            @unless(Auth::user()->role === 'parent')
+                            <div class="hidden space-y-1 sm:-my-px sm:flex">
+                                <x-nav-link :href="route('posts.index')" :active="request()->routeIs('posts.*')">
+                                    {{ __('Posts') }}
+                                </x-nav-link>
+                            </div>
+                            @endunless
 
-                        @if( Auth::user()->role === 'admin' )
-                        <div class="hidden space-y-1 sm:-my-px sm:flex">
-                            <x-nav-link :href="route('classrooms.index')" :active="request()->routeIs('classrooms.*')">
-                                {{ __('Classrooms') }}
-                            </x-nav-link>
+                            @if( Auth::user()->role === 'admin' )
+                            <div class="hidden space-y-1 sm:-my-px sm:flex">
+                                <x-nav-link :href="route('classrooms.index')" :active="request()->routeIs('classrooms.*')">
+                                    {{ __('Classrooms') }}
+                                </x-nav-link>
+                            </div>
+                            <div class="hidden space-y-1 sm:-my-px sm:flex">
+                                <x-nav-link :href="route('postgroups.index')" :active="request()->routeIs('postgroups.*')">
+                                    {{ __('Post Groups') }}
+                                </x-nav-link>
+                            </div>
+                            <div class="hidden space-y-1 sm:-my-px sm:flex">
+                                <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                                    {{ __('Users') }}
+                                </x-nav-link>
+                            </div>
+                            <div class="hidden space-y-1 sm:-my-px sm:flex">
+                                <x-nav-link :href="route('students.index')" :active="request()->routeIs('students.*')">
+                                    {{ __('Students') }}
+                                </x-nav-link>
+                            </div>
+                            @endif
                         </div>
-                        <div class="hidden space-y-1 sm:-my-px sm:flex">
-                            <x-nav-link :href="route('postgroups.index')" :active="request()->routeIs('postgroups.*')">
-                                {{ __('Post Groups') }}
-                            </x-nav-link>
-                        </div>
-                        <div class="hidden space-y-1 sm:-my-px sm:flex">
-                            <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
-                                {{ __('Users') }}
-                            </x-nav-link>
-                        </div>
-                        <div class="hidden space-y-1 sm:-my-px sm:flex">
-                            <x-nav-link :href="route('students.index')" :active="request()->routeIs('students.*')">
-                                {{ __('Students') }}
-                            </x-nav-link>
-                        </div>
-                        @endif
                     </div>
                 </div>
 
                 <!-- Page Content -->
-                <main>
+                <main class="w-full">
                     <!-- Page Heading -->
                     @isset($header)
                         <header class="bg-white shadow">
-                            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+                            <div class="max-w-7xl mx-auto py-1 px-4 sm:px-6 lg:px-8">
                                 {{ $header }}
                             </div>
                         </header>
