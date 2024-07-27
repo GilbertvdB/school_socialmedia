@@ -20,7 +20,7 @@ class PostController extends Controller
         $id = Auth::user()->id;
         // dd(Post::find($id));
         return view('posts.index', [
-            'posts' => Post::where('author_id', auth()->user()->id)->latest()->get()
+            'posts' => Post::where('author_id', auth()->user()->id)->latest()->paginate(5)
         ]);
     }
 
