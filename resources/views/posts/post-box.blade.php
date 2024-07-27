@@ -45,5 +45,14 @@
         </div>
         <h1 class="mt-4 text-lg text-gray-900"><strong>{{ $post->title }}</strong></h1>
         <p class="mt-4 text-lg text-gray-900">{{ $post->body }}</p>
+        
+        <hr class="my-4">
+        
+        <!-- Actions -->
+        <div class="flex space-x-4">
+            <x-like-button :post="$post" />
+            <span>Comment</span>
+            <span>Favorite</span>
+        </div>
     </div>
 </div>

@@ -77,6 +77,35 @@
                     
                     {{ $slot }}
                 </main>
+                <!-- Like/Unlike button -->    
+                <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    document.body.addEventListener('click', function (event) {
+                        if (event.target.matches('.like-button')) {
+                            const button = event.target;
+                            const postId = button.getAttribute('data-post-id');
+                            const liked = button.getAttribute('data-liked') === 'true';
+
+                            fetch(`/posts/${postId}/toggle-like`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: JSON.stringify({})
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                button.textContent = data.liked ? 'Unlike' : 'Like';
+                                button.setAttribute('data-liked', data.liked ? 'true' : 'false');
+                                const likeCountSpan = button.nextElementSibling;
+                                likeCountSpan.textContent = data.like_count;
+                            });
+                        }
+                    });
+                });
+            </script>
+            
             </div>
         </div>
     </body>

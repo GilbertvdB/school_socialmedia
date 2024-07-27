@@ -21,6 +21,7 @@ class Post extends Model
         'title',
         'body',
         'author_id',
+        'like_count',
         'published_at',
     ];
 
@@ -42,5 +43,10 @@ class Post extends Model
     public function getPostGroupsNamesAttribute()
     {
         return $this->postGroups->pluck('name')->implode(', ');
+    }
+
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
     }
 }

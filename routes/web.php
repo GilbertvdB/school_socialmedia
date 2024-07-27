@@ -9,6 +9,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
 use App\Models\Post;
 use App\Notifications\NewPost;
+use App\View\Components\LikeButton;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/posts', [DashboardController::class, 'loadMorePosts'])->name('dashboard.posts');
+    Route::post('/posts/{post}/toggle-like', [LikeButton::class, 'toggleLike'])->name('posts.toggle-like');
 });
 
 Route::middleware('auth')->group(function () {
