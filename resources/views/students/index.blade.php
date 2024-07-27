@@ -77,6 +77,10 @@
                     </tbody>
                 </table>
             @endif
+
+            <div class="mt-4">
+                {{ $students->links() }}
+            </div>
         </div>
 
     </div>

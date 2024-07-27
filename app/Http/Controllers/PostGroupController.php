@@ -13,7 +13,7 @@ class PostGroupController extends Controller
      */
     public function index(): View
     {
-        $postGroups = PostGroup::all();
+        $postGroups = PostGroup::paginate(10);
         return view('postgroups.index', compact('postGroups'));
     }
 
