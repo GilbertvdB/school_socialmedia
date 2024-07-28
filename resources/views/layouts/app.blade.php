@@ -81,6 +81,7 @@
                 <script>
                 document.addEventListener('DOMContentLoaded', function () {
                     document.body.addEventListener('click', function (event) {
+                        // Handle like button click
                         if (event.target.matches('.like-button')) {
                             const button = event.target;
                             const postId = button.getAttribute('data-post-id');
@@ -102,9 +103,47 @@
                                 likeCountSpan.textContent = data.like_count;
                             });
                         }
+
+                        // Handle bookmark button click
+                        const bookmarkButton = event.target.closest('.bookmark-button');
+                
+                        if (bookmarkButton) {
+                            const postId = bookmarkButton.getAttribute('data-post-id');
+                            const bookmarked = bookmarkButton.getAttribute('data-bookmarked') === 'true';
+
+                            fetch(`/posts/${postId}/toggle-bookmark`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: JSON.stringify({})
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                const bookmarkIcon = bookmarkButton.querySelector('svg');
+                                if (data.bookmarked) {
+                                    // Replace with filled bookmark icon
+                                    bookmarkIcon.setAttribute('fill', 'currentColor');
+                                    bookmarkIcon.innerHTML = `
+                                        <path d="M5 3v16.5l7-3.15 7 3.15V3z" />
+                                    `;
+                                    bookmarkButton.setAttribute('data-bookmarked', 'true');
+                                } else {
+                                    // Replace with outline bookmark icon
+                                    bookmarkIcon.setAttribute('fill', 'none');
+                                    bookmarkIcon.innerHTML = `
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v16.5l7-3.15 7 3.15V3z" />
+                                    `;
+                                    bookmarkButton.setAttribute('data-bookmarked', 'false');
+                                }
+                            });
+                        }
                     });
                 });
             </script>
+
+
             
             </div>
         </div>

@@ -52,7 +52,7 @@
         <div class="flex space-x-4">
             <x-like-button :post="$post" />
             <span>Comment</span>
-            <span>Favorite</span>
+            <x-bookmark-button :post="$post" />
         </div>
     </div>
 </div>

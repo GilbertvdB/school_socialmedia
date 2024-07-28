@@ -19,6 +19,15 @@
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
+                <div class="flex items-center">
+                    <button>
+                        <a href="{{ route('dashboard.bookmarks')}}"> 
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor">
+                                <path d="M5 3v16.5l7-3.15 7 3.15V3z" />
+                            </svg>
+                        </a>
+                    </button>
+                </div>
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
@@ -72,36 +81,43 @@
             </x-responsive-nav-link>
         </div>
 
-        @unless(Auth::user()->role === 'parent')
-                <div class="pt-2 pb-3 space-y-1">
-                    <x-responsive-nav-link :href="route('posts.index')" :active="request()->routeIs('posts.*')">
-                        {{ __('Posts') }}
-                    </x-responsive-nav-link>
-                </div>
-                @endunless
+        
+        @if(Auth::user()->role !== 'parent')
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="route('posts.index')" :active="request()->routeIs('posts.*')">
+                {{ __('Posts') }}
+            </x-responsive-nav-link>
+        </div>
+        @endif
+        
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="route('dashboard.bookmarks')" :active="request()->routeIs('dashboard.*')">
+                {{ __('Bookmarks') }}
+            </x-responsive-nav-link>
+        </div>
 
-                @if( Auth::user()->role === 'admin' )
-                <div class="pt-2 pb-3 space-y-1">
-                    <x-responsive-nav-link :href="route('classrooms.index')" :active="request()->routeIs('classrooms.*')">
-                        {{ __('Classrooms') }}
-                    </x-responsive-nav-link>
-                </div>
-                <div class="pt-2 pb-3 space-y-1">
-                    <x-responsive-nav-link :href="route('postgroups.index')" :active="request()->routeIs('postgroups.*')">
-                        {{ __('Post Groups') }}
-                    </x-responsive-nav-link>
-                </div>
-                <div class="pt-2 pb-3 space-y-1">
-                    <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
-                        {{ __('Users') }}
-                    </x-responsive-nav-link>
-                </div>
-                <div class="pt-2 pb-3 space-y-1">
-                    <x-responsive-nav-link :href="route('students.index')" :active="request()->routeIs('students.*')">
-                        {{ __('Students') }}
-                    </x-responsive-nav-link>
-                </div>
-                @endif
+        @if( Auth::user()->role === 'admin' )
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="route('classrooms.index')" :active="request()->routeIs('classrooms.*')">
+                {{ __('Classrooms') }}
+            </x-responsive-nav-link>
+        </div>
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="route('postgroups.index')" :active="request()->routeIs('postgroups.*')">
+                {{ __('Post Groups') }}
+            </x-responsive-nav-link>
+        </div>
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                {{ __('Users') }}
+            </x-responsive-nav-link>
+        </div>
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="route('students.index')" :active="request()->routeIs('students.*')">
+                {{ __('Students') }}
+            </x-responsive-nav-link>
+        </div>
+        @endif
 
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200">
