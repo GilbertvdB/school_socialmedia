@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bookmark;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use App\Models\Post;
@@ -43,31 +44,43 @@ class DashboardController extends Controller
      * Display and load more listing of the resource when the user scrolls down.
      */
     public function loadMorePosts(Request $request): JsonResponse
-{
-    $user = Auth::user();
-    
-    if ($user->role !== 'admin') {
-        $posts = Post::whereHas('postGroups', function ($query) use ($user) {
-            $query->whereHas('users', function ($query) use ($user) {
-                $query->where('users.id', $user->id);
-            });
-        })
-        ->with('user')
-        ->latest()
-        ->paginate(5);
-    } else {
-        $posts = Post::with('user')->latest()->paginate(5);
-    }
-    
-    $html = '';
-    foreach ($posts as $post) {
-        $html .= view('posts.post-box', compact('post'))->render();
+    {
+        $user = Auth::user();
+        
+        if ($user->role !== 'admin') {
+            $posts = Post::whereHas('postGroups', function ($query) use ($user) {
+                $query->whereHas('users', function ($query) use ($user) {
+                    $query->where('users.id', $user->id);
+                });
+            })
+            ->with('user')
+            ->latest()
+            ->paginate(5);
+        } else {
+            $posts = Post::with('user')->latest()->paginate(5);
+        }
+        
+        $html = '';
+        foreach ($posts as $post) {
+            $html .= view('posts.post-box', compact('post'))->render();
+        }
+
+        return response()->json([
+            'html' => $html,
+            'next_page_url' => $posts->nextPageUrl(),
+        ]);
     }
 
-    return response()->json([
-        'html' => $html,
-        'next_page_url' => $posts->nextPageUrl(),
-    ]);
-}
+    /**
+     * Display a listing of the resource.
+     */
+    public function bookmarks(): View
+    {   
+        $user = Auth::user();
+        $bookmarks = Bookmark::where('user_id', $user->id)->paginate(5);
 
+        return view('posts.bookmarks', [
+            'bookmarks' => $bookmarks,
+        ]);
+    }
 }
