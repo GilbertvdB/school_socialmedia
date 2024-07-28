@@ -1,5 +1,5 @@
 <!-- resources/views/components/bookmark-button.blade.php -->
-<div>
+<div class="flex items-center">
     <button class="bookmark-button" data-post-id="{{ $post->id }}" data-bookmarked="{{ $bookmarked ? 'true' : 'false' }}">
     @if ($bookmarked)
             <!-- Filled Bookmark Icon -->

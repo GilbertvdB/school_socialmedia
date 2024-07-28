@@ -82,10 +82,11 @@
                 document.addEventListener('DOMContentLoaded', function () {
                     document.body.addEventListener('click', function (event) {
                         // Handle like button click
-                        if (event.target.matches('.like-button')) {
-                            const button = event.target;
-                            const postId = button.getAttribute('data-post-id');
-                            const liked = button.getAttribute('data-liked') === 'true';
+                        const likeButton = event.target.closest('.like-button');
+                
+                        if (likeButton) {
+                            const postId = likeButton.getAttribute('data-post-id');
+                            const liked = likeButton.getAttribute('data-liked') === 'true';
 
                             fetch(`/posts/${postId}/toggle-like`, {
                                 method: 'POST',
@@ -97,10 +98,20 @@
                             })
                             .then(response => response.json())
                             .then(data => {
-                                button.textContent = data.liked ? 'Unlike' : 'Like';
-                                button.setAttribute('data-liked', data.liked ? 'true' : 'false');
-                                const likeCountSpan = button.nextElementSibling;
+                                const likeIcon = likeButton.querySelector('svg');
+
+                                const likeCountSpan = likeButton.nextElementSibling;
                                 likeCountSpan.textContent = data.like_count;
+
+                                if (data.liked) {
+                                    // Replace with filled bookmark icon
+                                    likeIcon.setAttribute('fill', 'currentColor');
+                                    likeButton.setAttribute('data-bookmarked', 'true');
+                                } else {
+                                    // Replace with outline bookmark icon
+                                    likeIcon.setAttribute('fill', 'none');
+                                    likeButton.setAttribute('data-bookmarked', 'false');
+                                }
                             });
                         }
 

@@ -49,7 +49,7 @@
         <hr class="my-4">
         
         <!-- Actions -->
-        <div class="flex space-x-4">
+        <div class="flex items-center space-x-4">    
             <x-like-button :post="$post" />
             <span>Comment</span>
             <x-bookmark-button :post="$post" />
