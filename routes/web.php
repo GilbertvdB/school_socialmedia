@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClassroomController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\PostGroupController;
@@ -35,6 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('/postgroups', PostGroupController::class);
     Route::resource('/users', UserController::class);
     Route::resource('/students', StudentController::class);
+    Route::resource('/comments', CommentController::class);
     
     // development routes
     Route::get('/notification', function () {

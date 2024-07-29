@@ -22,7 +22,7 @@
                 <div class="flex items-center">
                     <button>
                         <a href="{{ route('dashboard.bookmarks')}}"> 
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500 hover:text-blue-600" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor">
                                 <path d="M5 3v16.5l7-3.15 7 3.15V3z" />
                             </svg>
                         </a>

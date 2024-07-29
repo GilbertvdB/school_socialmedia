@@ -20,7 +20,7 @@
 
             
             <div class="flex flex-col-2">
-                <div class="hidden sm:flex border relative bg-white w-1/5">
+                <div class="hidden sm:flex border relative bg-white w-1/5 min-h-screen">
                     <div class="flex flex-col w-full">
                         <div class="sticky top-0">
                             <!-- Navigation Links -->
