@@ -34,10 +34,8 @@ class CommentController extends Controller
             'post_id' => 'required',
         ]);
  
-        $request->user()->comments()->create($validated);
-
-        $post = Post::find($request->post_id);
-        $post->increment('comment_count');
+        $comment = $request->user()->comments()->create($validated);
+        $comment->post->increment('comment_count');
  
         return redirect(route('dashboard'));
     }
@@ -62,8 +60,23 @@ class CommentController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, Comment $comment)
-    {
-        //
+    {           
+        $postId = $comment->post->id;
+        $commentId = $comment->id;
+        $inputName = "message-{$postId}-{$commentId}";
+        
+        // Dynamically validate the input
+        $validated = $request->validate([
+            $inputName => 'required|string|max:255',
+        ], [
+            "{$inputName}.required" => 'The message field is required.',
+            "{$inputName}.string" => 'The message must be a string.',
+            "{$inputName}.max" => 'The message must not be greater than 255 characters.',
+        ]);
+
+        $comment->update(['message' => $validated[$inputName]]);
+ 
+        return redirect()->back();
     }
 
     /**
@@ -71,6 +84,9 @@ class CommentController extends Controller
      */
     public function destroy(Comment $comment)
     {
-        //
+        $comment->post->decrement('comment_count');
+        $comment->delete();
+
+        return redirect(route('dashboard'));
     }
 }
