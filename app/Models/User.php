@@ -61,6 +61,11 @@ class User extends Authenticatable
         return $this->belongsToMany(PostGroup::class)->withTimestamps();
     }
 
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+
     // Accessor to get post group names as a comma-separated string .ie $post->post_groups_names
     public function getPostGroupsNamesAttribute()
     {

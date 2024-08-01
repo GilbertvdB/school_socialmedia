@@ -83,4 +83,29 @@ class DashboardController extends Controller
             'bookmarks' => $bookmarks,
         ]);
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function test(): View
+    {   
+        $user = Auth::user();
+        
+        if($user->role !== 'admin')
+        {
+            // Query to retrieve posts where the user belongs to the post groups
+            $posts = Post::whereHas('postGroups', function ($query) use ($user) {
+                $query->whereHas('users', function ($query) use ($user) {
+                    $query->where('users.id', $user->id);
+                });
+            })
+            ->with('user') // Eager load the user relationship for each post
+            ->latest()     // Order by latest created_at timestamp
+            ->paginate(5);
+        } else {
+            $posts = Post::with('user')->latest()->paginate(5);
+        }
+        
+        return view('test', compact('posts'));
+    }
 }
