@@ -1,6 +1,6 @@
 <!-- resources/views/components/comment-button.blade.php -->
 <div class="flex space-x-1">
-    <button class="comment-button" data-post-id="{{ $post->id }}" data-commented="{{ $commented ? 'true' : 'false' }}">
+    <button class="comment-button" data-post-id="{{ $post->id }}" data-commented="{{ $commented ? 'true' : 'false' }}" onclick="toggleComments({{ $post->id }})" {{ $post->comment_count >= 1 ? '' : 'disabled' }}>
     @if ($commented)
             <!-- Filled comment Icon -->
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500 hover:text-blue-600" viewBox="0 0 24 24" fill="currentColor" class="size-6" stroke-width="2" stroke="currentColor">
@@ -13,5 +13,5 @@
             </svg>
         @endif
     </button>
-    <span class="comment-count min-w-3">{{ $post->comment_count }}</span>
+    <span id="comment-count-{{ $post->id }}"class="comment-count min-w-3">{{ $post->comment_count }}</span>
 </div>

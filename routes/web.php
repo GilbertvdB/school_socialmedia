@@ -18,8 +18,13 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 
+// Route::get('/test', function () {
+//     return view('test');
+// });
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/test', [DashboardController::class, 'test'])->name('dashboard.test');
     Route::get('/dashboard/posts', [DashboardController::class, 'loadMorePosts'])->name('dashboard.posts');
     Route::post('/posts/{post}/toggle-like', [LikeButton::class, 'toggleLike'])->name('posts.toggle-like');
     Route::post('/posts/{post}/toggle-bookmark', [BookmarkButton::class, 'toggleBookmark'])->name('posts.toggle-bookmark');
@@ -36,6 +41,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('/postgroups', PostGroupController::class);
     Route::resource('/users', UserController::class);
     Route::resource('/students', StudentController::class);
+    // routes/api.php
+    Route::get('/posts/{post_id}/comments', [CommentController::class, 'getCommentsForPost']);
+    Route::get('/comments/template', [CommentController::class, 'template']);
     Route::resource('/comments', CommentController::class);
     
     // development routes

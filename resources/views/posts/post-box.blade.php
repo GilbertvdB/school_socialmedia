@@ -50,38 +50,52 @@
         <hr class="my-4">
         
         <!-- Actions -->
-        <div class="border flex items-center space-x-4">    
+        <div class="flex items-center space-x-4">    
             <x-like-button :post="$post" />
             <x-comment-button :post="$post" />
             <x-bookmark-button :post="$post" />
         </div>
 
-        <div class="border my-2 text-base text-blue-800">{{ __('Show Comments')}}</div>
-        <div class="border comment-container space-y-1">
-            @foreach($post->comments as $comment)
-                @include('comments.comment-box')
-            @endforeach
+        <!-- Show Comments Button -->
+        <button id="show-comments-btn-{{ $post->id }}" 
+                data-post-id="{{ $post->id }}" 
+                class="show-comments-btn my-2 text-base text-blue-800"
+                onclick="toggleComments({{ $post->id }})" 
+                {{ $post->comment_count >= 1 ? '' : 'disabled' }}>
+                @if($post->comment_count >= 1)
+                    Show Comments
+                @else
+                    <span class="text-gray-800"></span>
+                @endif
+                </button>
+
+        <!-- Comments Section -->
+        <div id="comments-section-{{ $post->id }}" class="mt-2 hidden"></div>
+
+        <!-- Store a message section-->
+        <div class="max-w-lg py-2">
+            <form id="comment-form-{{ $post->id }}" method="POST" action="{{ route('comments.store') }}">
+                @csrf
+                <input type="hidden" name="post_id" value="{{ $post->id }}">
+                <div class="flex">
+                    @php $inputName = "title-$post->id"; @endphp
+                    <textarea
+                        name="{{ $inputName }}"
+                        placeholder="{{ __('Leave a comment...') }}"
+                        rows="1"
+                        required
+                        class="block w-full border-gray-300 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-l-lg shadow-sm"
+                    >{{ old($inputName) }}</textarea>
+                    
+                    <button type="button" onclick="submitComment({{ $post->id }})" class="border border-gray-300 px-4 rounded-r-lg shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500 hover:text-blue-600" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                            <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" />
+                        </svg>
+                    </button>
+                </div>
+                <x-input-error :messages="$errors->get($inputName)" class="mt-2" />
+            </form>
         </div>
 
-        <div class="border max-w-lg py-2">
-        <form method="POST" action="{{ route('comments.store') }}">
-            @csrf
-            <input type="hidden" name="post_id" value="{{ $post->id }}">
-            <div class="flex">
-                <textarea
-                    name="message"
-                    placeholder="{{ __('Leave a comment...') }}"
-                    rows="1"
-                    class="block w-full border-gray-300 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-l-lg shadow-sm"
-                >{{ old('message') }}</textarea>
-                <button class="border border-gray-300 px-4 rounded-r-lg shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500 hover:text-blue-600" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-                        <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" />
-                    </svg>
-                </button>
-            </div>
-            <x-input-error :messages="$errors->get('message')" class="mt-2" />
-        </form>
-    </div>
     </div>
 </div>

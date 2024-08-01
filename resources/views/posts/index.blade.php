@@ -20,4 +20,6 @@
             {{ $posts->links() }}
         </div>
     </div>
+    <script> const userId = {{ Auth::id() }}; </script>
+    <script src="{{ asset('js/comments.js') }}"></script>
 </x-app-layout>

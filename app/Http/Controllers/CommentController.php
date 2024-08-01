@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
-use App\Models\Post;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
@@ -29,15 +28,22 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {   
+        $postId = $request->post_id;
+        $inputName = "title-{$postId}";
+
         $validated = $request->validate([
-            'message' => 'required|string|max:255',
+            $inputName => 'required|string|max:255',
             'post_id' => 'required',
         ]);
- 
+        
+        $validated['message'] = $validated[$inputName];
+        unset($validated[$inputName]);
+
         $comment = $request->user()->comments()->create($validated);
         $comment->post->increment('comment_count');
  
-        return redirect(route('dashboard'));
+        // return redirect()->back();
+        return response()->json(['message' => 'Comment created successfully']);
     }
 
     /**
@@ -59,34 +65,55 @@ class CommentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Comment $comment)
-    {           
-        $postId = $comment->post->id;
-        $commentId = $comment->id;
-        $inputName = "message-{$postId}-{$commentId}";
-        
-        // Dynamically validate the input
+    public function update(Request $request, $comment_id)
+    {   
+        $comment = Comment::findOrFail($comment_id);
+        // $postId = $comment->post->id;
+        // $commentId = $comment->id;
+        // $inputCommentName = "message-{$postId}-{$commentId}";
+
+        // // Dynamically validate the input
+        // $validated = $request->validate([
+        //     $inputCommentName => 'required|string|max:255',
+        // ]);
+
+        // $comment->update(['message' => $validated[$inputCommentName]]);
         $validated = $request->validate([
-            $inputName => 'required|string|max:255',
-        ], [
-            "{$inputName}.required" => 'The message field is required.',
-            "{$inputName}.string" => 'The message must be a string.',
-            "{$inputName}.max" => 'The message must not be greater than 255 characters.',
+            'message' => 'required|string|max:255'
         ]);
 
-        $comment->update(['message' => $validated[$inputName]]);
+        $comment->update($validated);
+        $comment->save();
  
-        return redirect()->back();
+        return response()->json(['message' => 'Comment edited successfully']);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Comment $comment)
+    public function destroy($comment_id)
     {
+        // $comment->post->decrement('comment_count');
+        // $comment->delete();
+        // return redirect(route('dashboard'));
+
+        $comment = Comment::findOrFail($comment_id);
         $comment->post->decrement('comment_count');
         $comment->delete();
 
-        return redirect(route('dashboard'));
+        return response()->json(['message' => 'Comment deleted successfully']);
+    }
+
+    public function getCommentsForPost($post_id)
+    {
+        $comments = Comment::where('post_id', $post_id)->with('user')->get();
+        
+        return response()->json($comments);
+    }
+
+    public function template()
+    {
+        // Render the Blade view and return as a response
+        return view('comments.template')->render();
     }
 }
