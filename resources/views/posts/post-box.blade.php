@@ -50,7 +50,7 @@
         @if($post->images)
             @include('posts.post-images')
         @endif
-        
+
         <hr class="my-4">
         
         <!-- Actions -->
