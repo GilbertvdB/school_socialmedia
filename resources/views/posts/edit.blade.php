@@ -21,7 +21,7 @@
     @endif
 
     <div class="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
-        <form method="POST" action="{{ route('posts.update', $post) }}">
+        <form method="POST" action="{{ route('posts.update', $post) }}" enctype="multipart/form-data">
             @csrf
             @method('patch')
             <x-input-label for="title" :value="__('Title')" />
@@ -44,6 +44,29 @@
                     @endforeach
                 </select>
                 <x-input-error :messages="$errors->get('post_groups')" class="mt-2" />
+            </div>
+
+            @if($post->images)
+            <!-- Existing Images -->
+            <div class="mt-4">
+                <x-input-label :value="__('Existing Images')" />
+                <div class="grid grid-cols-3 gap-4">
+                    @foreach($post->images as $image)
+                        <div class="relative">
+                            <!-- <img src="{{ asset('/public' . $image->url) }}" alt="Image" class="w-full h-auto"> -->
+                            <img src="{{ asset($image->url) }}" alt="Image" class="w-full h-auto">
+                            <!-- Add a delete button or other controls if necessary -->
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            <!-- Image Upload -->
+            <div class="mt-4">
+                <x-input-label for="images" :value="__('Upload Images')" />
+                <input id="images" type="file" name="images[]" class="block mt-1 w-full" multiple />
+                <x-input-error :messages="$errors->get('images')" class="mt-2" />
             </div>
 
             <div class="mt-4 space-x-2">

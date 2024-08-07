@@ -46,6 +46,10 @@
 
         <h1 class="mt-4 text-lg text-gray-900"><strong>{{ $post->title }}</strong></h1>
         <p class="mt-4 text-lg text-gray-900">{{ $post->body }}</p>
+
+        @if($post->images)
+            @include('posts.post-images')
+        @endif
         
         <hr class="my-4">
         

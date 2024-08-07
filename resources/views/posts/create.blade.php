@@ -12,7 +12,7 @@
 
 
     <div class="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
-        <form method="POST" action="{{ route('posts.store') }}">
+        <form method="POST" action="{{ route('posts.store') }}" enctype="multipart/form-data">
             @csrf
             <x-input-label for="title" :value="__('Title')" />
             <x-text-input id="title" class="block mt-1 w-full mb-2" type="text" name="title" placeholder="{{ __('Post title') }}" :value="old('title')" required autofocus autocomplete="title" />
@@ -35,6 +35,13 @@
                     @endforeach
                 </select>
                 <x-input-error :messages="$errors->get('post_groups')" class="mt-2" />
+            </div>
+
+            <!-- Image Upload -->
+            <div class="mt-4">
+                <x-input-label for="images" :value="__('Upload Images')" />
+                <input id="images" type="file" name="images[]" class="block mt-1 w-full" multiple />
+                <x-input-error :messages="$errors->get('images')" class="mt-2" />
             </div>
 
             <div class="mt-4 space-x-2">
