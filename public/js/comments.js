@@ -55,6 +55,7 @@ async function loadComments(postId) {
             .replace(/\${id}/g, comment.id)
             .replace(/\${post_id}/g, comment.post_id)
             .replace(/\${userName}/g, comment.user.name)
+            .replace(/\${userId}/g, comment.user.id)
             .replace(/\${createdAt}/g, new Date(comment.created_at).toLocaleString("en-GB",{day:"numeric", month:"long", year:"numeric", hour:"numeric", minute:"numeric"}))
             .replace(/\${message}/g, comment.message)
             .replace(/\${userId}/g, comment.user.id);
