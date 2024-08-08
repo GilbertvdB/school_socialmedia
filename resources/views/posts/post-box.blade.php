@@ -47,8 +47,36 @@
         <h1 class="mt-4 text-lg text-gray-900"><strong>{{ $post->title }}</strong></h1>
         <p class="mt-4 text-lg text-gray-900">{{ $post->body }}</p>
 
-        @if($post->images)
+        @if($post->images->isNotEmpty())
             @include('posts.post-images')
+        @endif
+
+        @if($post->documents->isNotEmpty())
+        <div class="mt-2 flex flex-col border-t">
+            @foreach($post->documents as $document)
+            <div class="flex items-center py-2 hover:bg-gray-50">
+                <!-- <a href="{{ route('posts.documents.view', $document->id) }}" class=" text-green-600 hover:underline" target="_blank">
+                    {{ basename($document->url) }}
+                </a> -->
+                
+                <div class="flex space-x-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 text-blue-600 hover:text-blue-700 size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                </svg>
+                @php
+                    $originalFilename = basename($document->url);
+                    $filenameParts = explode('_', $originalFilename);
+                    $customFilename = implode('_', array_slice($filenameParts, 4));
+                @endphp
+                <a href="{{ asset($document->url) }}" target="_blank" class="text-blue-600 hover:text-blue-700 hover:underline">
+                    {{ $customFilename }}
+                </a>
+                </div>
+                <!-- Add a delete button or other controls if necessary -->
+            </div>
+            <hr>
+            @endforeach
+        </div>
         @endif
 
         <hr class="my-4">

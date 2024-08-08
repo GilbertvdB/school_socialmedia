@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Image;
+use App\Models\Document;
 use App\Models\Post;
 use App\Models\PostGroup;
 use Illuminate\Http\RedirectResponse;
@@ -47,6 +48,7 @@ class PostController extends Controller
             'post_groups' => 'array',
             'post_groups.*' => 'exists:post_groups,id',
             'images' => 'nullable',
+            'documents' => 'nullable',
         ]);
 
         $post = $request->user()->posts()->create($validated);
@@ -73,6 +75,25 @@ class PostController extends Controller
                 $image = new Image([
                     'post_id' => $post->id,
                     'url' => 'images/posts/' . $filename,
+                ]);
+                $image->save();
+            }
+        }
+
+        //handle documents
+        if($request->hasFile('documents'))
+        {
+            foreach ($request->file('documents') as $file) {
+                $filename = date('Y_m_d_His') . '_' . str_replace(' ', '', $file->getClientOriginalName());
+                $file->storePubliclyAs(
+                    'documents/posts/',
+                    $filename,
+                    'public'
+                );
+    
+                $image = new Document([
+                    'post_id' => $post->id,
+                    'url' => 'documents/posts/' . $filename,
                 ]);
                 $image->save();
             }
@@ -149,6 +170,25 @@ class PostController extends Controller
                 $image->save();
             }
          }
+
+        //handle documents
+        if($request->hasFile('documents'))
+        {
+            foreach ($request->file('documents') as $file) {
+                $filename = date('Y_m_d_His') . '_' . str_replace(' ', '', $file->getClientOriginalName());
+                $file->storePubliclyAs(
+                    'documents/posts/',
+                    $filename,
+                    'public'
+                );
+    
+                $image = new Document([
+                    'post_id' => $post->id,
+                    'url' => 'documents/posts/' . $filename,
+                ]);
+                $image->save();
+            }
+        }
  
         return redirect(route('posts.edit', $post->id))->with('success', 'Post updated successfully.');
     }
@@ -167,9 +207,56 @@ class PostController extends Controller
                 Storage::disk('public')->delete($image->url);
             }
         }
+
+        if($post->documents)
+        {
+            foreach($post->documents as $document)
+            {   
+                Storage::disk('public')->delete($document->url);
+            }
+        }
         
         $post->delete();
  
         return redirect(route('posts.index'))->with('success', 'Post deleted successfully.');
+    }
+
+    public function downloadFile($documentId)
+    {
+        // Find the document by its ID (replace this with your actual logic)
+        $document = Document::findOrFail($documentId);
+
+        // Extract the original filename without the date and time prefix
+        $originalFilename = basename($document->url);
+        $filenameParts = explode('_', $originalFilename);
+
+        // Remove the first five elements (year, month, day, hour, minute)
+        $customFilename = implode('_', array_slice($filenameParts, 4));
+        
+        // Serve the file with the custom filename
+        return response()->download(storage_path("app/public/{$document->url}"), $customFilename);
+    }
+
+    public function viewFile($id)
+    {
+        $document = Document::findOrFail($id);
+
+        // Get the file's path
+        $filePath = storage_path('app/public/' . $document->url);
+
+        // Get the file's mime type to ensure it opens in the browser
+        $mimeType = mime_content_type($filePath);
+
+        // Extract the original filename without the date and time prefix
+        $originalFilename = basename($document->url);
+        $filenameParts = explode('_', $originalFilename);
+
+        // Remove the first five elements (year, month, day, time)
+        $customFilename = implode('_', array_slice($filenameParts, 4));
+
+        return response()->file($filePath, [
+            'Content-Type' => $mimeType,
+            'Content-Disposition' => 'inline; filename="' . $customFilename . '"'
+        ]);
     }
 }

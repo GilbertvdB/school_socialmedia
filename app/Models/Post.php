@@ -66,4 +66,9 @@ class Post extends Model
     {
         return $this->hasMany(Image::class);
     }
+
+    public function documents(): HasMany
+    {
+        return $this->hasMany(Document::class);
+    }
 }

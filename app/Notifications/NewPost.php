@@ -37,13 +37,26 @@ class NewPost extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {   
         $appName = config('app.name');
-        return (new MailMessage)
-                    ->subject("{$this->post->title}")
-                    ->greeting("{$this->post->title}")
-                    ->line("{$this->post->user->name} > {$this->post->post_groups_names}" )
-                    ->line(Str::limit($this->post->body, 150))
-                    ->action("View post in {$appName}", url('/posts',['post' => $this->post]))
-                    ->salutation(" ");
+        $mailMessage = (new MailMessage)
+        ->subject("{$this->post->title}")
+        ->greeting("{$this->post->title}")
+        ->line("{$this->post->user->name} > {$this->post->post_groups_names}")
+        ->line(Str::limit($this->post->body, 150));
+    
+        if ($this->post->images->isNotEmpty() && $this->post->documents->isNotEmpty()) {
+            $mailMessage->line("Images & documents available. View in post.");
+        } 
+        elseif($this->post->images->isNotEmpty() )
+        {
+            $mailMessage->line("Images available. View in post.");
+        }
+        elseif ($this->post->documents->isNotEmpty()) {
+            $mailMessage->line("Documents available. View in post.");
+        }
+
+        return $mailMessage
+            ->action("View post in {$appName}", url('/posts',['post' => $this->post]))
+            ->salutation(" ");
     }
 
     /**

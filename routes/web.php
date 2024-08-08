@@ -3,6 +3,7 @@
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\PostGroupController;
 use App\Http\Controllers\ProfileController;
@@ -43,12 +44,17 @@ Route::middleware('auth')->group(function () {
     Route::resource('/students', StudentController::class);
     // routes/api.php
     Route::get('/posts/{post_id}/comments', [CommentController::class, 'getCommentsForPost']);
+    // Route::get('/posts/documents/download/{document}', [PostController::class, 'downloadFile'])->name('posts.documents.download');
+    // Route::get('/posts/documents/view/{document}', [PostController::class, 'viewFile'])->name('posts.documents.view');
     Route::get('/comments/template', [CommentController::class, 'template']);
     Route::resource('/comments', CommentController::class);
+
+    Route::delete('/posts/edit/document/{id}', [FileController::class, 'destroyDocument'])->name('document.destroy');
+    Route::delete('/posts/edit/image/{id}', [FileController::class, 'destroyImage'])->name('image.destroy');
     
     // development routes
     Route::get('/notification', function () {
-        $post = Post::find(17);
+        $post = Post::find(41);
      
         return (new NewPost($post))
                     ->toMail($post->user);

@@ -1,5 +1,5 @@
 <x-app-layout>
-<x-slot name="header">
+    <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Edit Post') }}
@@ -46,33 +46,149 @@
                 <x-input-error :messages="$errors->get('post_groups')" class="mt-2" />
             </div>
 
-            @if($post->images)
+            @if($post->images->isNotEmpty())
             <!-- Existing Images -->
-            <div class="mt-4">
+            <div class="mt-8">
                 <x-input-label :value="__('Existing Images')" />
                 <div class="grid grid-cols-3 gap-4">
                     @foreach($post->images as $image)
-                        <div class="relative">
-                            <!-- <img src="{{ asset('/public' . $image->url) }}" alt="Image" class="w-full h-auto"> -->
+                        <div id="image-{{$image->id}}"class="relative flex mr-4">
                             <img src="{{ asset($image->url) }}" alt="Image" class="w-full h-auto">
                             <!-- Add a delete button or other controls if necessary -->
+                            <button type="button" class="self-start text-red-500 hover:text-red-700" onclick="confirmDeleteImage({{$image->id}})">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
                         </div>
                     @endforeach
                 </div>
             </div>
             @endif
 
-            <!-- Image Upload -->
-            <div class="mt-4">
+            <!-- Images Upload -->
+            <div class="mt-8">
                 <x-input-label for="images" :value="__('Upload Images')" />
                 <input id="images" type="file" name="images[]" class="block mt-1 w-full" multiple />
                 <x-input-error :messages="$errors->get('images')" class="mt-2" />
             </div>
 
-            <div class="mt-4 space-x-2">
+            @if($post->documents->isNotEmpty())
+            <!-- Existing documents -->
+            <div class="mt-8">
+                <x-input-label :value="__('Existing Documents')" />
+                <div class="flex flex-col">
+                    @foreach($post->documents as $document)
+                    <div class="flex items-center border-t hover:underline hover:text-blue-700">
+                        <div id="document-{{$document->id}}" class="flex justify-between py-2 w-full">
+                        @php
+                            $originalFilename = basename($document->url);
+                            $filenameParts = explode('_', $originalFilename);
+                            $customFilename = implode('_', array_slice($filenameParts, 4));
+                        @endphp
+                        <a href="{{ asset($document->url) }}" target="_blank" class="text-blue-600">
+                            {{ $customFilename }}
+                        </a>
+                        <button type="button" class="text-red-500 hover:text-red-700" onclick="confirmDeleteDocument({{$document->id}})">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            <!-- Documents Upload -->
+            <div class="mt-8">
+                <x-input-label for="documents" :value="__('Upload Documents(PDF)')" />
+                <input id="documents" type="file" name="documents[]" class="block mt-1 w-full" multiple accept=".pdf" />
+                <x-input-error :messages="$errors->get('documents')" class="mt-2" />
+            </div>
+
+            <div class="mt-8 space-x-2">
                 <x-primary-button>{{ __('Update') }}</x-primary-button>
                 <a href="{{ route('posts.index') }}">{{ __('Cancel') }}</a>
             </div>
         </form>
     </div>
 </x-app-layout>
+
+<script>
+    // Add CSRF token meta tag in the <head> section of your HTML
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    function confirmDeleteDocument(id) {
+        // Show confirmation dialog
+        const isConfirmed = confirm('Are you sure you want to delete this document?');
+        
+        if (isConfirmed) {
+            // Proceed with AJAX deletion
+            deleteDocument(id);
+        }
+    }
+
+    async function deleteDocument(id) {
+        try {
+            const response = await fetch(`/posts/edit/document/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                }
+            });
+
+            if (response.ok) {
+                // Remove the document div from the DOM
+                document.getElementById(`document-${id}`).remove();
+            } else {
+                // Handle errors (optional)
+                console.error('Failed to delete document');
+                alert('Failed to delete document. Please try again.');
+            }
+        } catch (error) {
+            // Handle fetch errors (optional)
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        }
+    }
+
+    function confirmDeleteImage(id) {
+        // Show confirmation dialog
+        const isConfirmed = confirm('Are you sure you want to delete this image?');
+        
+        if (isConfirmed) {
+            // Proceed with AJAX deletion
+            deleteImage(id);
+        }
+    }
+
+    async function deleteImage(id) {
+        try {
+            const response = await fetch(`/posts/edit/image/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                }
+            });
+
+            if (response.ok) {
+                // Remove the image div from the DOM
+                document.getElementById(`image-${id}`).remove();
+            } else {
+                // Handle errors (optional)
+                console.error('Failed to delete image');
+                alert('Failed to delete image. Please try again.');
+            }
+        } catch (error) {
+            // Handle fetch errors (optional)
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        }
+    }
+</script>
