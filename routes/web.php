@@ -42,10 +42,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('/postgroups', PostGroupController::class);
     Route::resource('/users', UserController::class);
     Route::resource('/students', StudentController::class);
-    // routes/api.php
+    
     Route::get('/posts/{post_id}/comments', [CommentController::class, 'getCommentsForPost']);
-    // Route::get('/posts/documents/download/{document}', [PostController::class, 'downloadFile'])->name('posts.documents.download');
-    // Route::get('/posts/documents/view/{document}', [PostController::class, 'viewFile'])->name('posts.documents.view');
     Route::get('/comments/template', [CommentController::class, 'template']);
     Route::resource('/comments', CommentController::class);
 
