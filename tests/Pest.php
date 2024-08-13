@@ -18,9 +18,7 @@ use Tests\TestCase;
 
 // uses(TestCase::class, DatabaseTransactions::class)->in('Feature');
 uses(TestCase::class, RefreshDatabase::class)->in('Feature');
-// pest()->extend(TestCase::class, RefreshDatabase::class)->beforeEach(function () {
-//     Storage::fake('public');
-// });
+
 /*
 uses(TestCase::class, RefreshDatabase::class)
     ->group('models')
