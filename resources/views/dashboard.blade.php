@@ -7,12 +7,16 @@
         </div>
     </x-slot>
 
-    <div id="posts-container" class="max-w-6xl mx-auto p-6 sm:px-6 lg:p-8">
+    <div id="posts-container" class="max-7xl mx-auto p-6 sm:px-6 lg:p-8">
+    @if ($posts->isEmpty())
+        <p class="text-gray-700">No items available.</p>
+    @else
         <div class="grid gap-y-8">
             @foreach ($posts as $post)
                 @include('posts.post-box', ['post' => $post])
             @endforeach
         </div>
+    @endif
     </div>
 
     <div id="loading" class="text-center py-4 flex" style="display: none;">

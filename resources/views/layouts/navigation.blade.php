@@ -17,13 +17,13 @@
                     </x-nav-link>
                 </div>
                 
-                @unless(Auth::user()->role === 'parent')
+                @if(Auth::user()->role !== 'parent' && Auth::user()->role !== 'student')
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('posts.index')" :active="request()->routeIs('posts.*')">
                         {{ __('Posts') }}
                     </x-nav-link>
                 </div>
-                @endunless
+                @endif
 
                 @if( Auth::user()->role === 'admin' )
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">

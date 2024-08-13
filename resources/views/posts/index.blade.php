@@ -10,7 +10,10 @@
         </div>
     </x-slot>
 
-    <div class="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+    @if ($posts->isEmpty())
+        <p class="text-gray-700">No items available.</p>
+    @else
         <div class="grid gap-y-8">
             @foreach ($posts as $post)
                 @include('posts.post-box')
@@ -20,6 +23,7 @@
         <div class="mt-4">
             {{ $posts->links() }}
         </div>
+    @endif
     </div>
     <script> const userId = {{ Auth::id() }}; </script>
     <script src="{{ asset('js/comments.js') }}"></script>
