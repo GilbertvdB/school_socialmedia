@@ -33,4 +33,4 @@ test('vertical menu displays correct items for different roles', function ($role
         ['parent', ['Dashboard', 'Bookmarks'], ['Posts', 'Classrooms', 'Post Groups', 'Users', 'Students']],
         ['student', ['Dashboard', 'Bookmarks'], ['Posts', 'Classrooms', 'Post Groups', 'Users', 'Students']],
         
-])->only();
+]);

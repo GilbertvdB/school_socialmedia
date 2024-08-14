@@ -21,7 +21,6 @@ class PostController extends Controller
     public function index(): View
     {
         $id = Auth::user()->id;
-        // dd(Post::find($id));
         return view('posts.index', [
             'posts' => Post::where('author_id', auth()->user()->id)->latest()->paginate(5)
         ]);

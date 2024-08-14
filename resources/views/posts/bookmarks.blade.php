@@ -10,7 +10,7 @@
         </div>
     </x-slot>
     
-    <div class="max-w-6xl mx-auto p-6 sm:px-6 lg:p-8">
+    <div class="max-w-7xl mx-auto p-6 sm:px-6 lg:p-8">
         <div class="grid gap-y-8">
             @if ($bookmarks->isEmpty())
                 <p>No bookmarks available.</p>
