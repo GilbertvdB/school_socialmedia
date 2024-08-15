@@ -17,7 +17,7 @@ use Tests\TestCase;
 */
 
 // uses(TestCase::class, DatabaseTransactions::class)->in('Feature');
-uses(TestCase::class, RefreshDatabase::class)->in('Feature');
+// uses(TestCase::class, RefreshDatabase::class)->in('Feature');
 
 /*
 uses(TestCase::class, RefreshDatabase::class)
@@ -26,8 +26,8 @@ uses(TestCase::class, RefreshDatabase::class)
     
     */
 uses(TestCase::class, DatabaseTransactions::class)
-    ->group('home')
-    ->in('Http');
+    ->group('bookmarks')
+    ->in('Feature');
     
 /*
 |--------------------------------------------------------------------------

@@ -23,7 +23,7 @@ class BookmarkButton extends Component
     }
 
     /**
-     * Handles the toggle of the like botton.
+     * Handles the toggle of the bookmark botton.
      */
     public function toggleBookmark(Post $post)
     {   

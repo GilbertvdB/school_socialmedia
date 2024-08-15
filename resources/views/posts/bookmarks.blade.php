@@ -21,9 +21,11 @@
             @endif
         </div>
 
+        @if($bookmarks->isNotEmpty())
         <div class="mt-4">
             {{ $bookmarks->links() }}
         </div>
+        @endif
     </div>
     <script> const userId = {{ Auth::id() }}; </script>
     <script src="{{ asset('js/comments.js') }}"></script>
