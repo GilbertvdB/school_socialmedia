@@ -33,15 +33,34 @@ class LikeButton extends Component
 
         if ($like) {
             $like->delete();
-            $this->post->decrement('like_count');
+            $this->decrementLike();
             $this->liked = false;
         } else {
             $this->post->likes()->create(['user_id' => $user->id]);
-            $this->post->increment('like_count');
+            $this->incrementLike();
             $this->liked = true;
         }
 
         return response()->json(['liked' => $this->liked, 'like_count' => $this->post->like_count]);
+    }
+
+    /**
+     * Decrement the like count for the post with 1.
+     */
+    public function decrementLike()
+    {   
+        if($this->post->like_count > 0)
+        {
+            $this->post->decrement('like_count');
+        }
+    }
+
+    /**
+     * Increment the like count for the post with 1.
+     */
+    public function incrementLike()
+    {
+        $this->post->increment('like_count');
     }
 
     /**

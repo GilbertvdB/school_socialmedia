@@ -24,6 +24,8 @@ class PostFactory extends Factory
             'title' => "Fake Title",
             'body' => fake()->realText($maxNbChars = 200, $indexSize = 2),
             'author_id' => $user->id,
+            'like_count' => 0,
+            'comment_count' => 0,
         ];
     }
 }
