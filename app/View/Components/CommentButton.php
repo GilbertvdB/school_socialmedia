@@ -12,6 +12,7 @@ class CommentButton extends Component
 {
     public $post;
     public $commented;
+    public $userCommentsCount;
 
     /**
      * Create a new component instance.
@@ -19,8 +20,8 @@ class CommentButton extends Component
     public function __construct(Post $post)
     {
         $this->post = $post;
-        // $this->commented = $post->comments->contains('user_id', Auth::id());
-        $this->commented = false;
+        $this->commented = $post->comments->contains('user_id', Auth::id());
+        $this->userCommentsCount = $this->getUserCommentsCount();
     }
 
     /**
@@ -30,19 +31,48 @@ class CommentButton extends Component
     {   
         $this->post = $post;
         $user = Auth::user();
-        $comment = $this->post->coments()->where('user_id', $user->id)->first();
+        $this->userCommentsCount = $this->getUserCommentsCount();
+        $comment = $this->post->comments()->where('user_id', $user->id)->first();
 
         if ($comment) {
             $comment->delete();
-            $this->post->decrement('comment_count');
+            $this->decrementComment();
             $this->commented = false;
         } else {
             $this->post->comments()->create(['user_id' => $user->id]);
-            $this->post->increment('comment_count');
+            $this->incrementComment();
             $this->commented = true;
         }
+    }
 
-        return response()->json(['commented' => $this->commented, 'comment_count' => $this->post->comment_count]);
+    /**
+     * Decrement the comment count for the post with 1.
+     */
+    public function decrementComment()
+    {   
+        if($this->post->comment_count > 0)
+        {
+            $this->post->decrement('comment_count');
+        }
+    }
+
+    /**
+     * Increment the comment count for the post with 1.
+     */
+    public function incrementComment()
+    {
+        $this->post->increment('comment_count');
+    }
+
+    /**
+     * Get the ammount of comments of a user for the given post.
+     */
+    public function getUserCommentsCount()
+    {
+        $user = Auth::user();
+        $comments = $user->comments->where('post_id', $this->post->id);
+        
+        return count($comments);
     }
 
     /**

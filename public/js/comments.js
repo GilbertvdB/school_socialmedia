@@ -21,6 +21,7 @@ async function submitComment(postId) {
             if (result.message === 'Comment created successfully') {
                 // Reload or append the comment to the comments container
                 await loadComments(postId);
+                incrementUserCommentsCount(postId);
                 updateCommentCount(postId);
                 commentsSection.classList.remove('hidden');
                 toggleButton.textContent = 'Hide Comments';
@@ -106,6 +107,7 @@ function updateCommentCount(postId) {
     if (commentCount == 0) {
         commentsSection.classList.add('hidden');
         toggleButton.textContent = '';
+        decrementUserCommentsCount(postId);
     }
 
 }
@@ -172,8 +174,44 @@ async function deleteComment(id, postId) {
     if (response.ok) {
         document.getElementById(`comment-box-${id}`).parentElement.remove();
         updateCommentCount(postId);
+        decrementUserCommentsCount(postId);
     } else {
         console.error('Failed to delete comment');
         // Optionally handle the error
     }
 }
+
+function incrementUserCommentsCount(postId){
+    const commentButton = document.querySelector(`.comment-button[data-post-id="${postId}"]`);
+    let count = parseInt(commentButton.getAttribute('data-user-comments-count'), 10);
+    count++;
+    commentButton.setAttribute('data-user-comments-count', count);
+    toggleCommentIcon(commentButton, count);
+}
+
+function decrementUserCommentsCount(postId){
+    const commentButton = document.querySelector(`.comment-button[data-post-id="${postId}"]`);
+    let count = parseInt(commentButton.getAttribute('data-user-comments-count'), 10);
+    
+    if(count > 0) {
+        count--;
+    }
+
+    commentButton.setAttribute('data-user-comments-count', count);
+    toggleCommentIcon(commentButton, count);
+}
+
+function toggleCommentIcon(commentButton, count){
+    const commentIcon = commentButton.querySelector('svg');
+    
+    if(count > 0) {
+        commentIcon.setAttribute('fill', 'currentColor');
+        commentButton.setAttribute('data-commented','true');
+    } else {
+        commentIcon.setAttribute('fill', 'none');
+        commentButton.setAttribute('data-commented', 'false');
+    }
+}
+
+
+
