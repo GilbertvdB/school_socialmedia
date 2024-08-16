@@ -77,14 +77,14 @@
 
         <hr class="my-4">
         
-        <!-- Actions -->
+        <!-- Action Buttons -->
         <div class="flex items-center space-x-4">    
             <x-like-button :post="$post" />
             <x-comment-button :post="$post" />
             <x-bookmark-button :post="$post" />
         </div>
 
-        <!-- Show Comments Button -->
+        <!-- Show Comments Link Button -->
         <button id="show-comments-btn-{{ $post->id }}" 
                 data-post-id="{{ $post->id }}" 
                 class="show-comments-btn my-2 text-base text-blue-800"
