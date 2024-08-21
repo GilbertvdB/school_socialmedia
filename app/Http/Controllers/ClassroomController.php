@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ClassroomStoreRequest;
 use App\Models\Classroom;
-use Illuminate\Http\Request;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class ClassroomController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): View
     {
         $classrooms = Classroom::paginate(10);
         return view('classrooms.index', compact('classrooms'));
@@ -19,7 +21,7 @@ class ClassroomController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): View
     {
         return view('classrooms.create');
     }
@@ -27,14 +29,9 @@ class ClassroomController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ClassroomStoreRequest $request): RedirectResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'capacity' => 'required|integer',
-        ]);
-
-        Classroom::create($request->all());
+        Classroom::create($request->validated());
 
         return redirect()->route('classrooms.index')->with('success', 'Classroom created successfully.');
     }
@@ -42,7 +39,7 @@ class ClassroomController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Classroom $classroom)
+    public function show(Classroom $classroom): View
     {
         return view('classrooms.show', compact('classroom'));
     }
@@ -50,7 +47,7 @@ class ClassroomController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Classroom $classroom)
+    public function edit(Classroom $classroom): View
     {
         return view('classrooms.edit', compact('classroom'));
     }
@@ -58,14 +55,9 @@ class ClassroomController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Classroom $classroom)
+    public function update(ClassroomStoreRequest $request, Classroom $classroom): RedirectResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'capacity' => 'required|integer',
-        ]);
-
-        $classroom->update($request->all());
+        $classroom->update($request->validated());
 
         return redirect()->route('classrooms.index')->with('success', 'Classroom updated successfully.');
     }
@@ -73,7 +65,7 @@ class ClassroomController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Classroom $classroom)
+    public function destroy(Classroom $classroom): RedirectResponse
     {
         $classroom->delete();
 
