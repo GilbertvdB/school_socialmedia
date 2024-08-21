@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Image;
-use App\Models\Document;
+use App\Http\Requests\PostStoreRequest;
 use App\Models\Post;
 use App\Models\PostGroup;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Storage;
+use App\Traits\UploadableFile;
 
 class PostController extends Controller
-{
+{   
+    use UploadableFile;
+
     /**
      * Display a listing of the resource.
      */
@@ -30,7 +30,7 @@ class PostController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): View
     {   
         $postGroups = PostGroup::all();
         return view('posts.create', compact('postGroups'));
@@ -39,19 +39,9 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(PostStoreRequest $request): RedirectResponse
     { 
-        // Validate the request
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'body' => 'required|string',
-            'post_groups' => 'array',
-            'post_groups.*' => 'exists:post_groups,id',
-            'images' => 'nullable',
-            'documents' => 'nullable',
-        ]);
-
-        $post = $request->user()->posts()->create($validated);
+        $post = $request->user()->posts()->create($request->validated());
         $post->published_at = $post->created_at;
         $post->save();
 
@@ -60,48 +50,10 @@ class PostController extends Controller
             $post->postGroups()->attach($request->post_groups);
         }
 
-        //handle images
-        if($request->hasFile('images'))
-        {
-            foreach ($request->file('images') as $file) {
-                // $filename = date('Y_m_d_His') . '_' . str_replace(' ', '', $file->getClientOriginalName());
-                $filename = date('Y_m_d_His') . '_' . str_replace(' ', '', $file->hashName());
-                // $file->move(public_path('images/posts/'), $filename);
-                // Storage::disk('public')->put('images/posts/', );
-                $file->storePubliclyAs(
-                    'images/posts/',
-                    $filename,
-                    'public'
-                );
-    
-                $image = new Image([
-                    'post_id' => $post->id,
-                    'url' => 'images/posts/' . $filename,
-                ]);
-                $image->save();
-            }
-        }
+        // Handle file uploads
+        $this->uploadImages($request, $post);
+        $this->uploadDocuments($request, $post);
 
-        //handle documents
-        if($request->hasFile('documents'))
-        {
-            foreach ($request->file('documents') as $file) {
-                $filename = date('Y_m_d_His') . '_' . str_replace(' ', '', $file->getClientOriginalName());
-                $file->storePubliclyAs(
-                    'documents/posts/',
-                    $filename,
-                    'public'
-                );
-    
-                $document = new Document([
-                    'post_id' => $post->id,
-                    'url' => 'documents/posts/' . $filename,
-                ]);
-                $document->save();
-            }
-        }
-
-        // Additional logic, e.g., redirect or return response
         return redirect(route('posts.index'))->with('success', 'Post created successfully.');
     }
 
@@ -131,18 +83,11 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Post $post): RedirectResponse
+    public function update(PostStoreRequest $request, Post $post): RedirectResponse
     {
         Gate::authorize('update', $post);
  
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'body' => 'required|string',
-            'post_groups' => 'array',
-            'post_groups.*' => 'exists:post_groups,id',
-            'images' => 'nullable',
-            'documents' => 'nullable',
-        ]);
+        $validated = $request->validated();
 
         $post->update([
             'title' => $validated['title'],
@@ -156,43 +101,9 @@ class PostController extends Controller
             $post->postGroups()->sync($request->post_groups);
         }
         
-         //handle images
-         if($request->hasFile('images'))
-         {  
-            foreach ($request->file('images') as $file) {
-                $filename = date('Y_m_d_His') . '_' . str_replace(' ', '', $file->hashName());
-                $file->storePubliclyAs(
-                    'images/posts/',
-                    $filename,
-                    'public'
-                );
-    
-                $image = new Image([
-                    'post_id' => $post->id,
-                    'url' => 'images/posts/' . $filename,
-                ]);
-                $image->save();
-            }
-         }
-
-        //handle documents
-        if($request->hasFile('documents'))
-        {
-            foreach ($request->file('documents') as $file) {
-                $filename = date('Y_m_d_His') . '_' . str_replace(' ', '', $file->getClientOriginalName());
-                $file->storePubliclyAs(
-                    'documents/posts/',
-                    $filename,
-                    'public'
-                );
-    
-                $document = new Document([
-                    'post_id' => $post->id,
-                    'url' => 'documents/posts/' . $filename,
-                ]);
-                $document->save();
-            }
-        }
+        // Handle file uploads
+        $this->uploadImages($request, $post);
+        $this->uploadDocuments($request, $post);
  
         return redirect(route('posts.edit', $post->id))->with('success', 'Post updated successfully.');
     }
@@ -204,21 +115,8 @@ class PostController extends Controller
     {
         Gate::authorize('delete', $post);
         
-        if($post->images)
-        {
-            foreach($post->images as $image)
-            {   
-                Storage::disk('public')->delete($image->url);
-            }
-        }
-
-        if($post->documents)
-        {
-            foreach($post->documents as $document)
-            {   
-                Storage::disk('public')->delete($document->url);
-            }
-        }
+        $this->removeFile($post->images);
+        $this->removeFile($post->documents);
         
         $post->delete();
  

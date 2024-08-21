@@ -39,15 +39,15 @@
 
             <!-- Images Upload -->
             <div class="mt-8">
-                <x-input-label for="images" :value="__('Upload Images')" />
+                <x-input-label for="images" :value="__('Upload Images Max 2MB')" />
                 <input id="images" type="file" name="images[]" class="block mt-1 w-full" multiple />
                 <x-input-error :messages="$errors->get('images')" class="mt-2" />
             </div>
 
             <!-- Documents Upload -->
             <div class="mt-8">
-                <x-input-label for="documents" :value="__('Upload Documents(PDF)')" />
-                <input id="documents" type="file" name="documents[]" class="block mt-1 w-full" multiple accept=".pdf" />
+                <x-input-label for="documents" :value="__('Upload Documents(PDF/Docx) Max 5MB')" />
+                <input id="documents" type="file" name="documents[]" class="block mt-1 w-full" multiple accept=".pdf,.docx" />
                 <x-input-error :messages="$errors->get('documents')" class="mt-2" />
             </div>
 
