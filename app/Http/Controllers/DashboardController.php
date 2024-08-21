@@ -6,10 +6,10 @@ use App\Models\Bookmark;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use App\Models\Post;
-use App\Models\PostGroup;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use phpDocumentor\Reflection\Types\Mixed_;
 
 class DashboardController extends Controller
 {
@@ -20,19 +20,11 @@ class DashboardController extends Controller
     {   
         $user = Auth::user();
         
-        if($user->role !== 'admin')
+        if($user->role == 'admin')
         {
-            // Query to retrieve posts where the user belongs to the post groups
-            $posts = Post::whereHas('postGroups', function ($query) use ($user) {
-                $query->whereHas('users', function ($query) use ($user) {
-                    $query->where('users.id', $user->id);
-                });
-            })
-            ->with('user') // Eager load the user relationship for each post
-            ->latest()     // Order by latest created_at timestamp
-            ->paginate(5);
-        } else {
             $posts = Post::with('user')->latest()->paginate(5);
+        } else {
+            $posts = $this->getUserGroupsPosts($user);
         }
 
         return view('dashboard', [
@@ -47,23 +39,14 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         
-        if ($user->role !== 'admin') {
-            $posts = Post::whereHas('postGroups', function ($query) use ($user) {
-                $query->whereHas('users', function ($query) use ($user) {
-                    $query->where('users.id', $user->id);
-                });
-            })
-            ->with('user')
-            ->latest()
-            ->paginate(5);
-        } else {
+        if($user->role == 'admin')
+        {
             $posts = Post::with('user')->latest()->paginate(5);
+        } else {
+            $posts = $this->getUserGroupsPosts($user);
         }
         
-        $html = '';
-        foreach ($posts as $post) {
-            $html .= view('posts.post-box', compact('post'))->render();
-        }
+        $html = $this->renderPostsHtml($posts);
 
         return response()->json([
             'html' => $html,
@@ -85,27 +68,33 @@ class DashboardController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Retrieve all posts of the groups a user belongs to.
      */
-    public function test(): View
+    public function getUserGroupsPosts($user): Collection
     {   
-        $user = Auth::user();
+        // Query to retrieve posts where the user belongs to the post groups
+        $posts = Post::whereHas('postGroups', function ($query) use ($user) {
+            $query->whereHas('users', function ($query) use ($user) {
+                $query->where('users.id', $user->id);
+            });
+        })
+        ->with('user') // Eager load the user relationship for each post
+        ->latest()     // Order by latest created_at timestamp
+        ->paginate(5);
         
-        if($user->role !== 'admin')
-        {
-            // Query to retrieve posts where the user belongs to the post groups
-            $posts = Post::whereHas('postGroups', function ($query) use ($user) {
-                $query->whereHas('users', function ($query) use ($user) {
-                    $query->where('users.id', $user->id);
-                });
-            })
-            ->with('user') // Eager load the user relationship for each post
-            ->latest()     // Order by latest created_at timestamp
-            ->paginate(5);
-        } else {
-            $posts = Post::with('user')->latest()->paginate(5);
+        return $posts;
+    }
+
+    /**
+     * Renders each post view into one html file.
+     */
+    public function renderPostsHtml($posts): String
+    {
+        $html = '';
+        foreach ($posts as $post) {
+            $html .= view('posts.post-box', compact('post'))->render();
         }
-        
-        return view('test', compact('posts'));
+
+        return $html;
     }
 }

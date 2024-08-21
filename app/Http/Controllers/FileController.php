@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Document;
 use App\Models\Image;
 use App\Traits\UploadableFile;
+use Illuminate\Http\JsonResponse;
 
 class FileController extends Controller
 {
@@ -13,7 +14,7 @@ class FileController extends Controller
     /**
      * Remove the specified document from storage.
      */
-    public function destroyDocument($id)
+    public function destroyDocument($id): JsonResponse
     {   
         $document = Document::findOrFail($id);
         $this->removeFile(array($document));
@@ -25,7 +26,7 @@ class FileController extends Controller
     /**
      * Remove the specified document from storage.
      */
-    public function destroyImage($id)
+    public function destroyImage($id): JsonResponse
     {
         $image = Image::findOrFail($id);
         $this->removeFile(array($image));
