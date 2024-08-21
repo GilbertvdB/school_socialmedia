@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Document;
 use App\Models\Image;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use App\Traits\UploadableFile;
 
 class FileController extends Controller
 {
+    use UploadableFile;
 
     /**
      * Remove the specified document from storage.
@@ -16,7 +16,7 @@ class FileController extends Controller
     public function destroyDocument($id)
     {   
         $document = Document::findOrFail($id);
-        Storage::disk('public')->delete($document->url);
+        $this->removeFile(array($document));
         $document->delete();
 
         return response()->json(['message' => 'Document deleted successfully']);
@@ -28,7 +28,7 @@ class FileController extends Controller
     public function destroyImage($id)
     {
         $image = Image::findOrFail($id);
-        Storage::disk('public')->delete($image->url);
+        $this->removeFile(array($image));
         $image->delete();
 
         return response()->json(['message' => 'Image deleted successfully']);

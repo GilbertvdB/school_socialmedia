@@ -58,7 +58,7 @@ trait UploadableFile
     /**
      * Remove a file from storage.
      *
-     * @param string $filePath
+     * @param \Illuminate\Database\Eloquent\Collection $files
      * @return void
      */
     public function removeFile($files)
