@@ -23,7 +23,7 @@ class PostController extends Controller
     {
         $id = Auth::user()->id;
         return view('posts.index', [
-            'posts' => Post::where('author_id', auth()->user()->id)->latest()->paginate(5)
+            'posts' => Post::where('author_id', $id)->latest()->paginate(5)
         ]);
     }
 
@@ -93,11 +93,11 @@ class PostController extends Controller
                     'public'
                 );
     
-                $image = new Document([
+                $document = new Document([
                     'post_id' => $post->id,
                     'url' => 'documents/posts/' . $filename,
                 ]);
-                $image->save();
+                $document->save();
             }
         }
 
@@ -141,6 +141,7 @@ class PostController extends Controller
             'post_groups' => 'array',
             'post_groups.*' => 'exists:post_groups,id',
             'images' => 'nullable',
+            'documents' => 'nullable',
         ]);
 
         $post->update([
@@ -185,11 +186,11 @@ class PostController extends Controller
                     'public'
                 );
     
-                $image = new Document([
+                $document = new Document([
                     'post_id' => $post->id,
                     'url' => 'documents/posts/' . $filename,
                 ]);
-                $image->save();
+                $document->save();
             }
         }
  
@@ -222,44 +223,5 @@ class PostController extends Controller
         $post->delete();
  
         return redirect(route('posts.index'))->with('success', 'Post deleted successfully.');
-    }
-
-    public function downloadFile($documentId)
-    {
-        // Find the document by its ID (replace this with your actual logic)
-        $document = Document::findOrFail($documentId);
-
-        // Extract the original filename without the date and time prefix
-        $originalFilename = basename($document->url);
-        $filenameParts = explode('_', $originalFilename);
-
-        // Remove the first five elements (year, month, day, hour, minute)
-        $customFilename = implode('_', array_slice($filenameParts, 4));
-        
-        // Serve the file with the custom filename
-        return response()->download(storage_path("app/public/{$document->url}"), $customFilename);
-    }
-
-    public function viewFile($id)
-    {
-        $document = Document::findOrFail($id);
-
-        // Get the file's path
-        $filePath = storage_path('app/public/' . $document->url);
-
-        // Get the file's mime type to ensure it opens in the browser
-        $mimeType = mime_content_type($filePath);
-
-        // Extract the original filename without the date and time prefix
-        $originalFilename = basename($document->url);
-        $filenameParts = explode('_', $originalFilename);
-
-        // Remove the first five elements (year, month, day, time)
-        $customFilename = implode('_', array_slice($filenameParts, 4));
-
-        return response()->file($filePath, [
-            'Content-Type' => $mimeType,
-            'Content-Disposition' => 'inline; filename="' . $customFilename . '"'
-        ]);
     }
 }
