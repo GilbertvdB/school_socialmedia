@@ -14,7 +14,7 @@
                 <span class="text-gray-800 font-bold">{{ $post->post_groups_names }}</span>
                 <div class="-mt-2">
                     <small class="text-sm text-gray-600">on {{ $post->created_at->format('j M Y, g:i a') }}</small>
-                    @unless ($post->created_at->eq($post->updated_at))
+                    @unless ($post->created_at->eq($post->published_at))
                         <small class="text-sm text-gray-600"> &middot; {{ __('edited') }}</small>
                     @endunless
                 </div>

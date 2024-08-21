@@ -6,6 +6,7 @@ use App\Models\Image;
 use App\Models\Document;
 use App\Models\Post;
 use App\Models\PostGroup;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -51,6 +52,8 @@ class PostController extends Controller
         ]);
 
         $post = $request->user()->posts()->create($validated);
+        $post->published_at = $post->created_at;
+        $post->save();
 
         if ($request->has('post_groups')) 
         {
@@ -143,6 +146,7 @@ class PostController extends Controller
         $post->update([
             'title' => $validated['title'],
             'body' => $validated['body'],
+            'published_at' => Carbon::now(),
         ]);
 
         // Sync the post groups, attaching the selected tags
