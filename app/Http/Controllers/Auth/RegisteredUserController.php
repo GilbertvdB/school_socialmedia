@@ -5,15 +5,13 @@ namespace App\Http\Controllers\Auth;
 use App\Events\NewUserRegistered;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Auth\CreateNewPasswordLinkController;
+use App\Http\Requests\RegisteredUserStoreRequest;
 use App\Models\User;
 use App\Models\PostGroup;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
@@ -31,21 +29,14 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function store(RegisteredUserStoreRequest $request): RedirectResponse
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'role' => ['required'],
-            'post_groups' => ['array'],
-            'post_groups.*' => ['exists:post_groups,id',]
-            // 'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        $validated = $request->validated();
 
         $user = User::create([
-            'name' => $request->name,
-            'role' => $request->role,
-            'email' => $request->email,
+            'name' => $validated->name,
+            'role' => $validated->role,
+            'email' => $validated->email,
             // 'password' => Hash::make($request->password),
             'password' => Hash::make('test'),
         ]);
