@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StudentStoreRequest;
 use App\Models\Classroom;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class StudentController extends Controller
@@ -23,7 +23,7 @@ class StudentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Student $student)
+    public function show(Student $student): View
     {      
         $user = $student;
         return view('profile.show', compact('user'));
@@ -35,27 +35,16 @@ class StudentController extends Controller
     public function create(): View
     {      
         $classrooms = Classroom::all();
-        $parents = User::where('role', 'parent')->get();
+        $parents = User::parents()->get();
         return view('students.create', compact('classrooms', 'parents'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(StudentStoreRequest $request): RedirectResponse
     {   
-        // Validate the request
-        $validated= $request->validate([
-                'firstname' => ['required', 'string', 'max:255'],
-                'lastname' => ['required', 'string', 'max:255'],
-                'birthdate' => ['required', 'date'],
-                'gender' => ['required'],
-                'classroom' => ['nullable'],
-                'parents' => ['array'],
-                'parents.*' => ['exists:users,id',]
-            ]);
-        // dd($request->classroom);
-        $student = Student::create($validated);
+        $student = Student::create($request->validated());
         
         if ($request->has('classroom')) {
             $student->classroom()->attach($request->classroom);
@@ -65,8 +54,6 @@ class StudentController extends Controller
             $student->parents()->attach($request->parents);
         }
 
-        // Additional logic, e.g., redirect or return response
-        // return redirect(route('students.index'))->with('success', 'Student created successfully.');
         return to_route('students.index')->with('success', 'Student created successfully.');
     }
 
@@ -76,7 +63,7 @@ class StudentController extends Controller
     public function edit(Student $student): View
     {   
         $classrooms = Classroom::all();
-        $parents = User::where('role', 'parent')->get();
+        $parents = User::parents()->get();
         
         return view('students.edit', compact('student', 'classrooms', 'parents'));
     }
@@ -84,29 +71,20 @@ class StudentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Student $student): RedirectResponse
+    public function update(StudentStoreRequest $request, Student $student): RedirectResponse
     {
-        $validated= $request->validate([
-                'firstname' => ['required', 'string', 'max:255'],
-                'lastname' => ['required', 'string', 'max:255'],
-                'birthdate' => ['required', 'date'],
-                'gender' => ['required'],
-                'classroom' => ['nullable'],
-                'parents' => ['array'],
-                'parents.*' => ['exists:users,id',]
-            ]);
+        $validated= $request->validated();
 
-        $student->update($request->except(['classroom', 'parents']));
+        $student->update($validated->except(['classroom', 'parents']));
         
         if ($request->has('classroom')) {
-            $student->classroom()->sync($request->classroom);
+            $student->classroom()->sync($validated->classroom);
         }
         
         if ($request->has('parents')) {
-            $student->parents()->sync($request->parents);
+            $student->parents()->sync($validated->parents);
         }
         
-
         return redirect()->route('students.edit', $student->id)->with('success', 'Student updated successfully.');
     }
 
@@ -116,7 +94,7 @@ class StudentController extends Controller
     public function destroy(Student $student): RedirectResponse
     {
         $student->delete();
-        // delete all related entries
+
         return to_route('students.index')->with('success', 'Student deleted successfully.');
     }
 }
