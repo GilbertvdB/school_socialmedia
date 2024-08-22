@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostGroupStoreRequest;
 use App\Models\PostGroup;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class PostGroupController extends Controller
@@ -20,7 +21,7 @@ class PostGroupController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): View
     {
         return view('postgroups.create');
     }
@@ -28,14 +29,9 @@ class PostGroupController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PostGroupStoreRequest $request): RedirectResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string|max:255',
-        ]);
-
-        PostGroup::create($request->all());
+        PostGroup::create($request->validated());
 
         return redirect()->route('postgroups.index')->with('success', 'PostGroup created successfully.');
     }
@@ -44,7 +40,7 @@ class PostGroupController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(PostGroup $postGroup)
+    public function edit(PostGroup $postGroup): View
     {
         return view('postgroups.edit', compact('postGroup'));
     }
@@ -52,14 +48,9 @@ class PostGroupController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, PostGroup $postGroup)
+    public function update(PostGroupStoreRequest $request, PostGroup $postGroup): RedirectResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'capacity' => 'required|integer',
-        ]);
-
-        $postGroup->update($request->all());
+        $postGroup->update($request->validated());
 
         return redirect()->route('postgroups.index')->with('success', 'PostGroup updated successfully.');
     }
@@ -67,7 +58,7 @@ class PostGroupController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(PostGroup $postGroup)
+    public function destroy(PostGroup $postGroup): RedirectResponse
     {
         $postGroup->delete();
 
