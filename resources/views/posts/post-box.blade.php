@@ -100,7 +100,7 @@
         <!-- Comments Section -->
         <div id="comments-section-{{ $post->id }}" class="mt-2 hidden"></div>
 
-        <!-- Store a message section-->
+        <!-- Add a message input section-->
         <div class="max-w-lg py-2">
             <form id="comment-form-{{ $post->id }}" method="POST" action="{{ route('comments.store') }}">
                 @csrf

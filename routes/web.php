@@ -19,10 +19,6 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 
-// Route::get('/test', function () {
-//     return view('test');
-// });
-
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/posts', [DashboardController::class, 'loadMorePosts'])->name('dashboard.posts');
