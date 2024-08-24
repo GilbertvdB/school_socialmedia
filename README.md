@@ -38,3 +38,6 @@
  - Created a seperate js file to handle all comments section interaction such as, showing, adding, editing and deleting a comment.
  - Written tests using Pest. In my previous work experience we did not write any test so this is one aspect im still keen on learning and practicing.
 
+# In progress...
+Currently writing and adding proper feature and unit tests.
+
