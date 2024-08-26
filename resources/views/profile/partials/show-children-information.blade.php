@@ -11,7 +11,7 @@
     @else
         @foreach($user->students as $child)
         <div class="mb-4">
-            <a href="{{ route('students.show', $child)}}" class="text-lg font-medium text-blue-700">
+            <a href="{{ route('students.show', $child->uuid)}}" class="text-lg font-medium text-blue-700">
                 {{ $child->firstname }} {{ $child->lastname }}
             </a>
         </div>

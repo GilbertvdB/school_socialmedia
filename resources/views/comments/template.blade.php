@@ -1,7 +1,7 @@
 <div class="comment-box mb-2 max-w-lg" id="comment-box-${id}">
     <div class="comment-header flex justify-between items-center">
         <div class="flex items-center">
-            <span class="text-blue-800"><a href="/profile/${userId}" >${userName}</a></span>
+            <span class="text-blue-800"><a href="/profile/${userUuid}" >${userName}</a></span>
             <span class="text-gray-600 ml-2 text-sm">on ${createdAt}</span>
             <span class="edited hidden text-gray-600 ml-2 text-sm">&middot;&nbsp;&nbsp;edited </span>
         </div>
