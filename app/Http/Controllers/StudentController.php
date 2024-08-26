@@ -75,14 +75,14 @@ class StudentController extends Controller
     {
         $validated= $request->validated();
 
-        $student->update($validated->except(['classroom', 'parents']));
+        $student->update($request->except(['classroom', 'parents']));
         
         if ($request->has('classroom')) {
-            $student->classroom()->sync($validated->classroom);
+            $student->classroom()->sync($validated['classroom']);
         }
         
         if ($request->has('parents')) {
-            $student->parents()->sync($validated->parents);
+            $student->parents()->sync($validated['parents']);
         }
         
         return redirect()->route('students.edit', $student->id)->with('success', 'Student updated successfully.');
