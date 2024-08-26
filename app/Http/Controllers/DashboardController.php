@@ -60,7 +60,7 @@ class DashboardController extends Controller
     public function bookmarks(): View
     {   
         $user = Auth::user();
-        $bookmarks = Bookmark::where('user_id', $user->id)->paginate(5);
+        $bookmarks = Bookmark::whereBelongsTo($user)->paginate(5);
 
         return view('posts.bookmarks', [
             'bookmarks' => $bookmarks,
@@ -75,7 +75,7 @@ class DashboardController extends Controller
         // Query to retrieve posts where the user belongs to the post groups
         $posts = Post::whereHas('postGroups', function ($query) use ($user) {
             $query->whereHas('users', function ($query) use ($user) {
-                $query->where('users.id', $user->id);
+                $query->whereBelongsTo($user);
             });
         })
         ->with('user') // Eager load the user relationship for each post

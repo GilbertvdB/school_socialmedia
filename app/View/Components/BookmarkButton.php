@@ -29,7 +29,7 @@ class BookmarkButton extends Component
     {   
         $this->post = $post;
         $user = Auth::user();
-        $bookmark = $this->post->bookmarks()->where('user_id', $user->id)->first();
+        $bookmark = $this->post->bookmarks()->whereBelongsTo($user)->first();
 
         if ($bookmark) {
             $bookmark->delete();

@@ -29,7 +29,7 @@ class LikeButton extends Component
     {   
         $this->post = $post;
         $user = Auth::user();
-        $like = $this->post->likes()->where('user_id', $user->id)->first();
+        $like = $this->post->likes()->whereBelongsTo($user)->first();
 
         if ($like) {
             $like->delete();

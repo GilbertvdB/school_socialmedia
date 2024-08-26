@@ -32,7 +32,7 @@ class CommentButton extends Component
         $this->post = $post;
         $user = Auth::user();
         $this->userCommentsCount = $this->getUserCommentsCount();
-        $comment = $this->post->comments()->where('user_id', $user->id)->first();
+        $comment = $this->post->comments()->whereBelongsTo($user)->first();
 
         if ($comment) {
             $comment->delete();
