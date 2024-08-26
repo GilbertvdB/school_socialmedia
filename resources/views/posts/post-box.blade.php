@@ -6,7 +6,7 @@
         <div class="flex justify-between items-center">
             <div>
                 <span class="text-blue-800">
-                    <a href="{{ route('profile.show', $post->user->uuid)}}" >
+                    <a href="{{ route('profile.show', $post->user)}}" >
                         {{ $post->user->name }}
                     </a>
                 </span>

@@ -23,10 +23,9 @@ class StudentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($uuid): View
-    {      
-        $user = Student::where('uuid', $uuid)->firstOrFail();
-        return view('profile.show', compact('user'));
+    public function show(Student $student): View
+    {   
+        return view('profile.show', ['user' => $student]);
     }
 
     /**
