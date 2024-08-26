@@ -38,7 +38,7 @@
             <div class="mt-4">
                 <x-input-label for="gender" :value="__('Gender')" />
                 <select id="gender" name="gender" class="block mt-1 w-full" required>
-                    @foreach(['n', 'm', 'v'] as $gender)
+                    @foreach(['m', 'f', 'o', 'u', 'n' ] as $gender)
                         <option value="{{ $gender }}">
                             {{ ucfirst(old('gender', $gender)) }}
                         </option>

@@ -49,7 +49,7 @@
             <div class="mt-4">
                 <x-input-label for="gender" :value="__('Gender')" />
                 <select id="gender" name="gender" class="block mt-1 w-full" required>
-                    @foreach(['m', 'v', 'n'] as $gender)
+                    @foreach(['m', 'f', 'o', 'u', 'n' ] as $gender)
                         <option value="{{ $gender }}" 
                             {{ old('gender', $student->gender) == $gender ? 'selected' : '' }}>
                             {{ ucfirst($gender) }}

@@ -2,35 +2,21 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Model;
-use Ramsey\Uuid\Uuid;
 
 class Student extends Model
 {
-    use HasFactory;
+    use HasUuids, HasFactory;
 
     /**
-     * The primary key associated with the table.
-     *
-     * @var string
+     * Add a unique UUID to a student.
      */
-    protected $primaryKey = 'id';
-
-    /**
-     * Create a unique UUID for a student.
-     */
-    protected static function boot()
+    public function uniqueIds(): array
     {
-        parent::boot();
-
-        // Automatically generate UUIDs for new users
-        static::creating(function ($model) {
-            if (empty($model->uuid)) {
-                $model->uuid = Uuid::uuid4()->toString();
-            }
-        });
+        return ['uuid'];
     }
     
     /**
@@ -39,7 +25,6 @@ class Student extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'uuid',
         'firstname',
         'lastname',
         'birthdate',
