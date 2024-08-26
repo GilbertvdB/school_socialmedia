@@ -17,8 +17,9 @@ class ProfileController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function show($uuid)
     {   
+        $user = User::where('uuid', $uuid)->firstOrFail();
         return view('profile.show', compact('user'));
     }
 
