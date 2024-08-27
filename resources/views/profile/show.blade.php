@@ -39,7 +39,7 @@
                 </div>
             </div>
 
-                @if( $user->role == 'parent')
+                @if( $user->role === Role::Parent)
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg border">
                     <div class="max-w-xl">
                         @include('profile.partials.show-children-information')

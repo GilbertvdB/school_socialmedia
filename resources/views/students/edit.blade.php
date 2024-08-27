@@ -58,7 +58,8 @@
                     :value="old('gender', $student->gender)"
                     class="mt-1 block w-full"
                     required 
-                    autocomplete="gender" />
+                    autocomplete="gender"
+                    />
                 <x-input-error :messages="$errors->get('gender')" class="mt-2" />
             </div>
             

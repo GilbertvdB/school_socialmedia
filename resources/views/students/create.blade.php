@@ -47,7 +47,8 @@
                     :options="Gender::toArray()" 
                     :value="old('gender')"
                     required 
-                    autocomplete="gender" />
+                    autocomplete="gender" 
+                    />
                 <x-input-error :messages="$errors->get('gender')" class="mt-2" />
             </div>
             

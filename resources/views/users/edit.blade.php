@@ -1,3 +1,6 @@
+@php
+    use App\Enums\Role;
+@endphp
 <x-app-layout>
 <x-slot name="header">
 <div class="div flex justify-between items-center">
@@ -41,14 +44,15 @@
             <!-- Role -->
             <div class="mt-4">
                 <x-input-label for="role" :value="__('Role')" />
-                <select id="role" name="role" class="block mt-1 w-full" required>
-                    @foreach(['none', 'admin', 'personel', 'teacher', 'parent', 'student'] as $role)
-                        <option value="{{ $role }}" 
-                            {{ old('role', $user->role) == $role ? 'selected' : '' }}>
-                            {{ ucfirst($role) }}
-                        </option>
-                    @endforeach
-                </select>
+                <x-select-input 
+                    id="role" 
+                    name="role" 
+                    :options="role::toArray()" 
+                    :value="old('role', $user->role)"
+                    class="mt-1 block w-full"
+                    required 
+                    autocomplete="role" 
+                    />
                 <x-input-error :messages="$errors->get('role')" class="mt-2" />
             </div>
 

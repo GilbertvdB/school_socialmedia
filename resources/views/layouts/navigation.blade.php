@@ -1,3 +1,6 @@
+@php
+    use App\Enums\Role;
+@endphp
 <div class="hidden sm:flex border relative bg-white w-1/5 min-h-screen">
     <div class="flex flex-col w-full">
         <div class="sticky top-0">
@@ -8,7 +11,7 @@
                 </x-nav-link>
             </div>
             
-            @if(Auth::user()->role !== 'parent' && Auth::user()->role !== 'student')
+            @if(Auth::user()->role !== Role::Parent && Auth::user()->role !== Role::Student)
             <div class="hidden space-y-1 sm:-my-px sm:flex">
                 <x-nav-link :href="route('posts.index')" :active="request()->routeIs('posts.*')">
                     {{ __('Posts') }}
@@ -16,7 +19,7 @@
             </div>
             @endif
 
-            @if( Auth::user()->role === 'admin' )
+            @if( Auth::user()->role === Role::Admin )
             <div class="hidden space-y-1 sm:-my-px sm:flex">
                 <x-nav-link :href="route('classrooms.index')" :active="request()->routeIs('classrooms.*')">
                     {{ __('Classrooms') }}
