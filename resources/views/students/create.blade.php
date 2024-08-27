@@ -40,33 +40,43 @@
             <!-- Gender -->
             <div class="mt-4">
                 <x-input-label for="gender" :value="__('Gender')" />
-                <x-select-input id="gender" name="gender" class="mt-1 block w-full"
-                    :options="Gender::toArray()" :value="old('gender')"
-                    required autocomplete="gender" />
+                <x-select-input 
+                    id="gender" 
+                    name="gender" 
+                    class="mt-1 block w-full"
+                    :options="Gender::toArray()" 
+                    :value="old('gender')"
+                    required 
+                    autocomplete="gender" />
                 <x-input-error :messages="$errors->get('gender')" class="mt-2" />
             </div>
             
             <!-- Classroom -->
             <div class="mt-4">
                 <x-input-label for="classroom" :value="__('Classroom')" />
-                <select id="classroom" name="classroom[]" class="block mt-1 w-full" required>
-                @foreach($classrooms as $classroom)
-                    <option value="{{ $classroom->id }}">{{ old('classroom', $classroom->name) }}</option>
-                    @endforeach
-                </select>
+                <x-select-multiple-input
+                    id="classroom" 
+                    name="classroom[]" 
+                    :options="$classrooms->pluck('name', 'id')->toArray()"
+                    :value="old('classroom', [])"
+                    class="mt-1 block w-full"
+                    />
                 <x-input-error :messages="$errors->get('classroom')" class="mt-2" />
             </div>
 
-            <!-- Parents -->
+            <!-- Parents Select Mutiple -->
             <div class="mt-4">
                 <x-input-label for="parents" :value="__('Parents')" />
-                <select id="parents" name="parents[]" class="block mt-1 w-full" multiple>
-                    @foreach($parents as $parent)
-                        <option value="{{ $parent->id }}">{{ $parent->name }}</option>
-                    @endforeach
-                </select>
+                <x-select-multiple-input
+                    id="parents" 
+                    name="parents[]" 
+                    :options="$parents->pluck('name', 'id')"
+                    :value="old('parents', [])"
+                    class="mt-1 block w-full"
+                    />
                 <x-input-error :messages="$errors->get('parents')" class="mt-2" />
             </div>
+
 
             <div class="flex items-center justify-end mt-4">
                 <x-primary-button class="ms-4">
