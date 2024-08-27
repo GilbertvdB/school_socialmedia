@@ -48,38 +48,43 @@
                 <x-input-error :messages="$errors->get('birthdate')" class="mt-2" />
             </div>
 
-            <!-- Gender -->
+            <!-- Gender Enum Select-->
             <div class="mt-4">
                 <x-input-label for="gender" :value="__('Gender')" />
-                <x-select-input id="gender" name="gender" class="mt-1 block w-full"
-                    :options="Gender::toArray()" :value="old('gender', $student->gender)"
-                    required autocomplete="gender" />
+                <x-select-input 
+                    id="gender" 
+                    name="gender" 
+                    :options="Gender::toArray()" 
+                    :value="old('gender', $student->gender)"
+                    class="mt-1 block w-full"
+                    required 
+                    autocomplete="gender" />
                 <x-input-error :messages="$errors->get('gender')" class="mt-2" />
             </div>
             
-            <!-- Classroom -->
+            <!-- Classroom Select Multiple -->
             <div class="mt-4">
                 <x-input-label for="classroom" :value="__('Classroom')" />
-                <select id="classroom" name="classroom[]" class="block mt-1 w-full" required>
-                    @foreach($classrooms as $classroom)
-                        <option value="{{ $classroom->id }}" 
-                            @if($student->classroom->contains($classroom->id)) selected @endif>{{ $classroom->name }}
-                        </option>
-                    @endforeach
-                </select>
+                <x-select-multiple-input
+                    id="classroom" 
+                    name="classroom[]" 
+                    :options="$classrooms->pluck('name', 'id')->toArray()"
+                    :value="$student->classroom->pluck('id')->toArray()"
+                    class="mt-1 block w-full"
+                    />
                 <x-input-error :messages="$errors->get('classroom')" class="mt-2" />
             </div>
 
-
-            <!-- Parents -->
+            <!-- Parents Select Mutiple -->
             <div class="mt-4">
                 <x-input-label for="parents" :value="__('Parents')" />
-                <select id="parents" name="parents[]" class="block mt-1 w-full" multiple>
-                    @foreach($parents as $parent)
-                        <option value="{{ $parent->id }}" @if($student->parents->contains($parent->id)) selected @endif>{{ $parent->name }}
-                        </option>
-                    @endforeach
-                </select>
+                <x-select-multiple-input
+                    id="parents" 
+                    name="parents[]" 
+                    :options="$parents->pluck('name', 'id')->toArray()"
+                    :value="$student->parents->pluck('id')->toArray()"
+                    class="mt-1 block w-full"
+                    />
                 <x-input-error :messages="$errors->get('parents')" class="mt-2" />
             </div>
 
