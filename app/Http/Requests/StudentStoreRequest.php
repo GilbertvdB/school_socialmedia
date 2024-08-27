@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\Gender;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StudentStoreRequest extends FormRequest
 {
@@ -16,9 +18,9 @@ class StudentStoreRequest extends FormRequest
         return [
             'firstname' => ['required', 'string', 'max:255'],
             'lastname' => ['required', 'string', 'max:255'],
-            'birthdate' => ['required', 'date'],
-            'gender' => ['required'],
-            'classroom' => ['nullable'],
+            'birthdate' => ['required', 'date', 'before_or_equal:today'],
+            'gender' => ['required', Rule::enum(Gender::class)],
+            'classroom' => ['nullable', 'array'],
             'parents' => ['array'],
             'parents.*' => ['exists:users,id',]
         ];
