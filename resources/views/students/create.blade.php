@@ -1,3 +1,6 @@
+@php
+    use App\Enums\Gender;
+@endphp
 <x-app-layout>
 <x-slot name="header">
 <div class="div flex justify-between items-center">
@@ -27,9 +30,9 @@
                 <x-input-error :messages="$errors->get('lastname')" class="mt-2" />
             </div>
 
-            <!-- BIrthdate -->
+            <!-- Birthdate -->
             <div class="mt-4">
-                <x-input-label for="birthdate" :value="__('Birthdate')" />
+                <x-input-label for="birthdate" :value="__('Year of Birth')" />
                 <x-text-input id="birthdate" class="block mt-1 w-full" type="date" name="birthdate" :value="old('birthdate')" required />
                 <x-input-error :messages="$errors->get('birthdate')" class="mt-2" />
             </div>
@@ -37,13 +40,9 @@
             <!-- Gender -->
             <div class="mt-4">
                 <x-input-label for="gender" :value="__('Gender')" />
-                <select id="gender" name="gender" class="block mt-1 w-full" required>
-                    @foreach(['m', 'f', 'o', 'u', 'n' ] as $gender)
-                        <option value="{{ $gender }}">
-                            {{ ucfirst(old('gender', $gender)) }}
-                        </option>
-                    @endforeach
-                </select>
+                <x-select-input id="gender" name="gender" class="mt-1 block w-full"
+                    :options="Gender::toArray()" :value="old('gender')"
+                    required autocomplete="gender" />
                 <x-input-error :messages="$errors->get('gender')" class="mt-2" />
             </div>
             
@@ -57,7 +56,6 @@
                 </select>
                 <x-input-error :messages="$errors->get('classroom')" class="mt-2" />
             </div>
-
 
             <!-- Parents -->
             <div class="mt-4">
