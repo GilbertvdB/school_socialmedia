@@ -44,14 +44,16 @@
                 <x-input-error :messages="$errors->get('role')" class="mt-2" />
             </div>
 
-            <!-- Tags -->
+            <!-- Post Groups Tags -->
             <div class="mt-4">
                 <x-input-label for="post_groups" :value="__('Groups')" />
-                <select id="post_groups" name="post_groups[]" class="block mt-1 w-full" multiple>
-                    @foreach($postGroups as $postGroup)
-                    <option value="{{ $postGroup->id }}">{{ $postGroup->name }}</option>
-                    @endforeach
-                </select>
+                <x-select-multiple-input
+                    id="post_groups" 
+                    name="post_groups[]" 
+                    :options="$postGroups->pluck('name', 'id')->toArray()"
+                    :value="old('post_groups', [])"
+                    class="mt-1 block w-full"
+                    />
                 <x-input-error :messages="$errors->get('post_groups')" class="mt-2" />
             </div>
 

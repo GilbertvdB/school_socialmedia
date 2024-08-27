@@ -35,14 +35,16 @@
             >{{ old('body', $post->body) }}</textarea>
             <x-input-error :messages="$errors->get('body')" class="mt-2" />
 
-            <!-- Tags -->
+            <!-- Post Groups Tags -->
             <div class="mt-4">
                 <x-input-label for="post_groups" :value="__('Tags')" />
-                <select id="post_groups" name="post_groups[]" class="block mt-1 w-full" multiple>
-                    @foreach($postGroups as $postGroup)
-                        <option value="{{ $postGroup->id }}" @if($post->postGroups->contains($postGroup->id)) selected @endif>{{ $postGroup->name }}</option>
-                    @endforeach
-                </select>
+                <x-select-multiple-input
+                    id="post_groups" 
+                    name="post_groups[]" 
+                    :options="$postGroups->pluck('name', 'id')->toArray()"
+                    :value="$post->postGroups->pluck('id')->toArray()"
+                    class="mt-1 block w-full"
+                    />
                 <x-input-error :messages="$errors->get('post_groups')" class="mt-2" />
             </div>
 
