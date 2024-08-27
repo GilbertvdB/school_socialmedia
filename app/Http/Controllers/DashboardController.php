@@ -9,7 +9,7 @@ use App\Models\Post;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use phpDocumentor\Reflection\Types\Mixed_;
+use App\Enums\Role;
 
 class DashboardController extends Controller
 {
@@ -19,8 +19,8 @@ class DashboardController extends Controller
     public function index(): View
     {   
         $user = Auth::user();
-        
-        if($user->role == 'admin')
+    
+        if($user->role === Role::Admin)
         {
             $posts = Post::with('user')->latest()->paginate(5);
         } else {
@@ -39,7 +39,7 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         
-        if($user->role == 'admin')
+        if($user->role === Role::Admin)
         {
             $posts = Post::with('user')->latest()->paginate(5);
         } else {

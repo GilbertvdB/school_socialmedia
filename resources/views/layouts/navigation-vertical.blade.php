@@ -1,3 +1,6 @@
+@php
+    use App\Enums\Role;
+@endphp
 <nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -82,7 +85,7 @@
         </div>
 
         
-        @if(Auth::user()->role !== 'parent' && Auth::user()->role !== 'student')
+        @if(Auth::user()->role !== Role::Parent && Auth::user()->role !== Role::Student)
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('posts.index')" :active="request()->routeIs('posts.*')">
                 {{ __('Posts') }}
@@ -96,7 +99,7 @@
             </x-responsive-nav-link>
         </div>
 
-        @if( Auth::user()->role === 'admin' )
+        @if( Auth::user()->role === Role::Admin )
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('classrooms.index')" :active="request()->routeIs('classrooms.*')">
                 {{ __('Classrooms') }}
