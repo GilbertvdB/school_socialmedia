@@ -22,7 +22,7 @@ class StudentFactory extends Factory
             'firstname' => fake()->firstName(),
             'lastname' => fake()->lastName(),
             'birthdate' => fake()->date(),
-            'gender' => 'n',
+            'gender' => 'None',
         ];
     }
 }

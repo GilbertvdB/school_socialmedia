@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use App\Enums\Role;
 
 class UserUpdateRequest extends FormRequest
 {
@@ -17,7 +18,7 @@ class UserUpdateRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users')->ignore($this->user)],
-            'role' => ['required'],
+            'role' => ['required', Rule::enum(Role::class)],
             'post_groups' => ['array'],
             'post_groups.*' => ['exists:post_groups,id',]
         ];
