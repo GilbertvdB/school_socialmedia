@@ -3,30 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bookmark;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 use App\Models\Post;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Enums\Role;
+use Illuminate\Pagination\LengthAwarePaginator;
+use phpDocumentor\Reflection\Types\Mixed_;
 
 class DashboardController extends Controller
-{
+{   
     /**
      * Display a listing of the resource.
      */
     public function index(): View
     {   
-        $user = Auth::user();
-    
-        if($user->role === Role::Admin)
-        {
-            $posts = Post::with('user')->latest()->paginate(5);
-        } else {
-            $posts = $this->getUserGroupsPosts($user);
-        }
-
+        $posts = $this->getPostsAccordingToRole();
+        
         return view('dashboard', [
             'posts' => $posts,
         ]);
@@ -35,16 +29,9 @@ class DashboardController extends Controller
     /**
      * Display and load more listing of the resource when the user scrolls down.
      */
-    public function loadMorePosts(Request $request): JsonResponse
-    {
-        $user = Auth::user();
-        
-        if($user->role === Role::Admin)
-        {
-            $posts = Post::with('user')->latest()->paginate(5);
-        } else {
-            $posts = $this->getUserGroupsPosts($user);
-        }
+    public function loadMorePosts(): JsonResponse
+    {   
+        $posts = $this->getPostsAccordingToRole();
         
         $html = $this->renderPostsHtml($posts);
 
@@ -62,15 +49,25 @@ class DashboardController extends Controller
         $user = Auth::user();
         $bookmarks = Bookmark::whereBelongsTo($user)->paginate(5);
 
-        return view('posts.bookmarks', [
-            'bookmarks' => $bookmarks,
-        ]);
+        return view('posts.bookmarks', compact('bookmarks'));
+    }
+
+    /**
+     * Retrieve posts for the users proper role.
+     */
+    private function getPostsAccordingToRole(): Mixed
+    {   
+        $user = Auth::user();
+
+        return ($user->role === Role::Admin) 
+                    ? Post::with('user')->latest()->paginate(5) //show all latest posts
+                    : $this->getUserGroupsPosts($user);
     }
 
     /**
      * Retrieve all posts of the groups a user belongs to.
      */
-    public function getUserGroupsPosts($user): Collection
+    private function getUserGroupsPosts($user): Collection
     {   
         // Query to retrieve posts where the user belongs to the post groups
         $posts = Post::whereHas('postGroups', function ($query) use ($user) {
@@ -78,8 +75,8 @@ class DashboardController extends Controller
                 $query->whereBelongsTo($user);
             });
         })
-        ->with('user') // Eager load the user relationship for each post
-        ->latest()     // Order by latest created_at timestamp
+        ->with('user')
+        ->latest()
         ->paginate(5);
         
         return $posts;
@@ -88,7 +85,7 @@ class DashboardController extends Controller
     /**
      * Renders each post view into one html file.
      */
-    public function renderPostsHtml($posts): String
+    private function renderPostsHtml($posts): String
     {
         $html = '';
         foreach ($posts as $post) {
