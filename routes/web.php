@@ -15,16 +15,14 @@ use App\View\Components\BookmarkButton;
 use App\View\Components\LikeButton;
 use Illuminate\Support\Facades\Route;
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/dashboard/posts', [DashboardController::class, 'loadMorePosts'])->name('dashboard.posts');
+    Route::get('/dashboard/loadMorePosts', [DashboardController::class, 'loadMorePosts'])->name('dashboard.loadMorePosts');
+    Route::get('/bookmarks', [DashboardController::class, 'bookmarks'])->name('dashboard.bookmarks');
+    
+    //components routes
     Route::post('/posts/{post}/toggle-like', [LikeButton::class, 'toggleLike'])->name('posts.toggle-like');
     Route::post('/posts/{post}/toggle-bookmark', [BookmarkButton::class, 'toggleBookmark'])->name('posts.toggle-bookmark');
-    Route::get('/bookmarks', [DashboardController::class, 'bookmarks'])->name('dashboard.bookmarks');
 });
 
 Route::middleware('auth')->group(function () {
@@ -36,6 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('/classrooms', ClassroomController::class);
     Route::resource('/postgroups', PostGroupController::class);
     Route::resource('/users', UserController::class);
+    
     Route::resource('/students', StudentController::class)->except(['show']);
     Route::get('/students/{student:uuid}', [StudentController::class, 'show'])->name('students.show');
     
@@ -46,7 +45,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/posts/edit/document/{id}', [FileController::class, 'destroyDocument'])->name('document.destroy');
     Route::delete('/posts/edit/image/{id}', [FileController::class, 'destroyImage'])->name('image.destroy');
     
-    // development routes
+    Route::resource('posts', PostController::class)->middleware(['verified']);
+    
+    // development & testing routes
     Route::get('/notification', function () {
         $post = Post::find(41);
      
@@ -55,6 +56,5 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-Route::resource('posts', PostController::class)->middleware(['auth', 'verified']);
 
 require __DIR__.'/auth.php';
