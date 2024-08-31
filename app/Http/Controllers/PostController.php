@@ -11,10 +11,18 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Gate;
 use App\Traits\UploadableFile;
+use App\Services\PostCacheService;
 
 class PostController extends Controller
 {   
     use UploadableFile;
+
+    protected $postCacheService;
+
+    public function __construct(PostCacheService $postCacheService)
+    {
+        $this->postCacheService = $postCacheService;
+    }
 
     /**
      * Display a listing of the resource.
@@ -44,16 +52,19 @@ class PostController extends Controller
         $post = $request->user()->posts()->create($request->validated());
         $post->published_at = $post->created_at;
         $post->save();
-
+        
         if ($request->has('post_groups')) 
         {
             $post->postGroups()->attach($request->post_groups);
         }
-
+        
         // Handle file uploads
         $this->uploadImages($request, $post);
         $this->uploadDocuments($request, $post);
 
+        // Invalidate caches for all groups associated with this post
+        $this->postCacheService->invalidateCacheForPosts($post);
+        
         return redirect(route('posts.index'))->with('success', 'Post created successfully.');
     }
 
@@ -104,6 +115,9 @@ class PostController extends Controller
         // Handle file uploads
         $this->uploadImages($request, $post);
         $this->uploadDocuments($request, $post);
+
+        // Invalidate caches for all groups associated with this post
+        $this->postCacheService->invalidateCacheForPosts($post);
  
         return redirect(route('posts.edit', $post->id))->with('success', 'Post updated successfully.');
     }
@@ -118,6 +132,9 @@ class PostController extends Controller
         $this->removeFile($post->images);
         $this->removeFile($post->documents);
         
+        // Invalidate caches for all groups associated with this post
+        $this->postCacheService->invalidateCacheForPosts($post);
+
         $post->delete();
  
         return redirect(route('posts.index'))->with('success', 'Post deleted successfully.');

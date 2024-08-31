@@ -5,21 +5,43 @@ namespace App\Http\Controllers;
 use App\Models\Bookmark;
 use Illuminate\View\View;
 use App\Models\Post;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Enums\Role;
+use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use phpDocumentor\Reflection\Types\Mixed_;
+use Illuminate\Support\Facades\Cache;
+use App\Services\PostCacheService;
 
 class DashboardController extends Controller
 {   
+    private $postCacheService;
+
+    public function __construct(PostCacheService $postCacheService)
+    {
+        $this->postCacheService = $postCacheService;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index(): View
     {   
-        $posts = $this->getPostsAccordingToRole();
+        $user = Auth::user();
+        if($user->role == Role::Admin) 
+        {
+            $cacheKey = "dashboard_posts_{$user->role->value}_page_1";
+        } else {
+            $groupIds = $user->postGroups->pluck('id')->sort()->toArray();
+            $cacheKey = "dashboard_posts_groups_" . implode('_', $groupIds) . "_page_1";
+
+            // Store the cache key in each group's list
+            $this->postCacheService->storeCacheKeyForGroups($cacheKey, $groupIds);
+        }
+
+        $posts = Cache::remember($cacheKey, now()->addMinutes(10), function() {
+            return $this->getPostsAccordingToRole();
+        });
         
         return view('dashboard', [
             'posts' => $posts,
@@ -29,9 +51,15 @@ class DashboardController extends Controller
     /**
      * Display and load more listing of the resource when the user scrolls down.
      */
-    public function loadMorePosts(): JsonResponse
+    public function loadMorePosts(Request $request): JsonResponse
     {   
-        $posts = $this->getPostsAccordingToRole();
+        $user = Auth::user();
+        $page = $request->query('page', 2);
+        $cacheKey = "dashboard_posts_{$user->role->value}_page_{$page}";
+
+        $posts = Cache::remember($cacheKey, now()->addMinutes(10), function() {
+            return $this->getPostsAccordingToRole();
+        });
         
         $html = $this->renderPostsHtml($posts);
 
@@ -67,12 +95,12 @@ class DashboardController extends Controller
     /**
      * Retrieve all posts of the groups a user belongs to.
      */
-    private function getUserGroupsPosts($user): Collection
+    private function getUserGroupsPosts($user): LengthAwarePaginator
     {   
         // Query to retrieve posts where the user belongs to the post groups
         $posts = Post::whereHas('postGroups', function ($query) use ($user) {
             $query->whereHas('users', function ($query) use ($user) {
-                $query->whereBelongsTo($user);
+                $query->where('user_id', $user->id);
             });
         })
         ->with('user')
