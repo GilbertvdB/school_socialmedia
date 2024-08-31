@@ -62,8 +62,8 @@ class PostController extends Controller
         $this->uploadImages($request, $post);
         $this->uploadDocuments($request, $post);
 
-        // Invalidate caches for all groups associated with this post
-        $this->postCacheService->invalidateCacheForPosts($post);
+        // Invalidate cache keys for all groups associated with this post
+        $this->postCacheService->invalidateCacheKeysForPostGroups($post);
         
         return redirect(route('posts.index'))->with('success', 'Post created successfully.');
     }
@@ -116,8 +116,8 @@ class PostController extends Controller
         $this->uploadImages($request, $post);
         $this->uploadDocuments($request, $post);
 
-        // Invalidate caches for all groups associated with this post
-        $this->postCacheService->invalidateCacheForPosts($post);
+        // Invalidate cache keys for all groups associated with this post
+        $this->postCacheService->invalidateCacheKeysForPostGroups($post);
  
         return redirect(route('posts.edit', $post->id))->with('success', 'Post updated successfully.');
     }
@@ -132,8 +132,8 @@ class PostController extends Controller
         $this->removeFile($post->images);
         $this->removeFile($post->documents);
         
-        // Invalidate caches for all groups associated with this post
-        $this->postCacheService->invalidateCacheForPosts($post);
+        // Invalidate cache keys for all groups associated with this post
+        $this->postCacheService->invalidateCacheKeysForPostGroups($post);
 
         $post->delete();
  

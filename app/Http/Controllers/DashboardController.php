@@ -28,16 +28,7 @@ class DashboardController extends Controller
     public function index(): View
     {   
         $user = Auth::user();
-        if($user->role == Role::Admin) 
-        {
-            $cacheKey = "dashboard_posts_{$user->role->value}_page_1";
-        } else {
-            $groupIds = $user->postGroups->pluck('id')->sort()->toArray();
-            $cacheKey = "dashboard_posts_groups_" . implode('_', $groupIds) . "_page_1";
-
-            // Store the cache key in each group's list
-            $this->postCacheService->storeCacheKeyForGroups($cacheKey, $groupIds);
-        }
+        $cacheKey = $this->postCacheService->generateCacheKeyForPosts($user);
 
         $posts = Cache::remember($cacheKey, now()->addMinutes(10), function() {
             return $this->getPostsAccordingToRole();
@@ -55,7 +46,7 @@ class DashboardController extends Controller
     {   
         $user = Auth::user();
         $page = $request->query('page', 2);
-        $cacheKey = "dashboard_posts_{$user->role->value}_page_{$page}";
+        $cacheKey = $this->postCacheService->generateCacheKeyForPosts($user, $page);
 
         $posts = Cache::remember($cacheKey, now()->addMinutes(10), function() {
             return $this->getPostsAccordingToRole();
@@ -86,9 +77,10 @@ class DashboardController extends Controller
     private function getPostsAccordingToRole(): Mixed
     {   
         $user = Auth::user();
+        $itemsPerPage = config('post-pagination.items'); //5 items per page
 
         return ($user->role === Role::Admin) 
-                    ? Post::with('user')->latest()->paginate(5) //show all latest posts
+                    ? Post::with('user')->latest()->paginate($itemsPerPage) //show all latest posts
                     : $this->getUserGroupsPosts($user);
     }
 
@@ -97,6 +89,8 @@ class DashboardController extends Controller
      */
     private function getUserGroupsPosts($user): LengthAwarePaginator
     {   
+        $itemsPerPage = config('post-pagination.items'); //5 items per page
+
         // Query to retrieve posts where the user belongs to the post groups
         $posts = Post::whereHas('postGroups', function ($query) use ($user) {
             $query->whereHas('users', function ($query) use ($user) {
@@ -105,7 +99,7 @@ class DashboardController extends Controller
         })
         ->with('user')
         ->latest()
-        ->paginate(5);
+        ->paginate($itemsPerPage);
         
         return $posts;
     }

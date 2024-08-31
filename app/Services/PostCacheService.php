@@ -2,11 +2,31 @@
 
 namespace App\Services;
 
+use App\Enums\Role;
 use App\Models\Post;
 use Illuminate\Support\Facades\Cache;
 
 class PostCacheService
 {  
+    /**
+     * Generate cache key for Posts.
+     */
+    public function generateCacheKeyForPosts($user, $page=1): string
+    {
+        if($user->role == Role::Admin) 
+        {
+            $cacheKey = "dashboard_posts_groups_all_page_{$page}";
+        } else {
+            $groupIds = $user->postGroups->pluck('id')->sort()->toArray();
+            $cacheKey = "dashboard_posts_groups_" . implode('_', $groupIds) . "_page_{$page}";
+
+            // Store the cache key in each group's list for storing, updating or deleting posts.
+            $this->storeCacheKeyForGroups($cacheKey, $groupIds);
+        }
+
+        return $cacheKey;
+    }
+
     /**
      * Store cache key in lists associated with group IDs.
      */
@@ -23,9 +43,9 @@ class PostCacheService
     }
 
     /**
-     * Invalidate all cache for post.
+     * Invalidate all cache keys for post groups.
      */
-    public function invalidateCacheForPosts(Mixed $post): void
+    public function invalidateCacheKeysForPostGroups(Mixed $post): void
     {
         $groupIds = $post->postGroups->pluck('id')->toArray();
         foreach ($groupIds as $groupId) {
@@ -42,21 +62,22 @@ class PostCacheService
         foreach ($cacheKeyList as $cacheKey) {
             Cache::forget($cacheKey);
         }
-        // Optionally, clear the list itself
+        // Clear the group list and the group all list
         Cache::forget("group_cache_keys_{$groupId}");
-        $this->forgetAdminCachedPages();
+        $this->forgetCacheKeysForAllGroups();
     }
 
     /**
      * Remove all cache keys for all post pages.
      */
-    public function forgetAdminCachedPages()
+    public function forgetCacheKeysForAllGroups()
     {
        // clear cache for all post pages
-       $posts = Post::paginate(5, 'id');
+       $itemsPerPage = config('post-pagination.items'); //5 items per page
+       $posts = Post::paginate($itemsPerPage, 'id');
        $totalPages = $posts->lastPage();
        for ($page = 1; $page <= $totalPages; $page++) {
-           $cacheKey = "dashboard_posts_Admin_page_{$page}";
+           $cacheKey = "dashboard_posts_groups_all_page_{$page}";
            Cache::forget($cacheKey);
        }
     }
