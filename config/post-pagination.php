@@ -4,7 +4,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Pagination items per page 
+    | Pagination items per page for the post in the dashboard feed
     |--------------------------------------------------------------------------
     |
     | This value is will be used when paginating posts for the feed. This
