@@ -48,7 +48,7 @@
                     id="role" 
                     name="role" 
                     :options="role::toArray()" 
-                    :value="old('role', $user->role)"
+                    :value="old('role', $user->role->value)"
                     class="mt-1 block w-full"
                     required 
                     autocomplete="role" 
