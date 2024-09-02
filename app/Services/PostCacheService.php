@@ -9,13 +9,17 @@ use Illuminate\Support\Facades\Cache;
 class PostCacheService
 {  
     /**
-     * Generate cache key for Posts.
+     * Generate cache key for Posts on the dashboard feed.
      */
     public function generateCacheKeyForPosts($user, $page=1): string
     {
         if($user->role == Role::Admin) 
         {
             $cacheKey = "dashboard_posts_groups_all_page_{$page}";
+
+            // Store the cache key in a group's list for storing, updating or deleting posts.
+            $groupIds[] = 'all';
+            $this->storeCacheKeyForGroups($cacheKey, $groupIds);
         } else {
             $groupIds = $user->postGroups->pluck('id')->sort()->toArray();
             $cacheKey = "dashboard_posts_groups_" . implode('_', $groupIds) . "_page_{$page}";
@@ -28,7 +32,7 @@ class PostCacheService
     }
 
     /**
-     * Store cache key in lists associated with group IDs.
+     * Store cache key in lists associated with group IDs, for storing, updating or deleting posts actions or events.
      */
     public function storeCacheKeyForGroups(string $cacheKey, array $groupIds): void
     {
@@ -38,7 +42,7 @@ class PostCacheService
             // Add the new cache key to the list
             $cacheKeyList[] = $cacheKey;
             // Store the updated list back in the cache
-            Cache::put("group_cache_keys_{$groupId}", $cacheKeyList, now()->addMinutes(10)); // 1 hour expiry, adjust as needed
+            Cache::put("group_cache_keys_{$groupId}", $cacheKeyList, now()->addMinutes(10));
         }
     }
 
