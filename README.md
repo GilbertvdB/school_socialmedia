@@ -37,8 +37,13 @@
  - Ive created a combination of views and blade components for the frontend parts.
  - Created a seperate js file to handle all comments section interaction such as, showing, adding, editing and deleting a comment.
  - Written tests using Pest. In my previous work experience we did not write any test so this is one aspect im still keen on learning and practicing.
+ - Added a database cache service for the posts feed on dashboard. Updating cache keys on store, updates and deletion. Created a command and a schedule for invalidating and removing expired cache keys from the database.
 
 # In progress...
-- Implementing db cache for postsfeed.
+- Implementing db cache for postsfeed. [Done]
 - Currently writing and adding proper feature and unit tests.
+
+# Possible features
+- implement search feature
+- implement filter feature
 
